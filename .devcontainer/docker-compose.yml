@@ -1,0 +1,21 @@
+# Dev Container overrides, layered on top of ../docker-compose.yml by
+# devcontainer.json. Plain `docker compose up` (the quick trial) doesn't read
+# this file. Relative paths resolve against the first compose file, i.e. the
+# repo root.
+services:
+  app:
+    # The image is built by initializeCommand in devcontainer.json (plain
+    # `docker build`), not by Compose: Dev Containers builds Compose services
+    # from a generated Dockerfile in /tmp, which Compose v5's buildx bake
+    # refuses ("additional privileges requested: pass --allow=fs.read=...").
+    build: !reset null
+    # Separate tag so the dev image doesn't overwrite the trial image.
+    image: membrum2-app-dev
+    volumes:
+      # Mount the real checkout (with .git) instead of the copy baked into the
+      # image, so edits and git in VS Code act on the repo itself.
+      - .:/var/www/html
+      # Same target as the storage_app volume in ../docker-compose.yml, so this
+      # replaces it: use the checkout's own storage/app (that volume is
+      # root-owned and not writable by the dev user).
+      - ./storage/app:/var/www/html/storage/app

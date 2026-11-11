@@ -1,0 +1,41 @@
+name: Bugg
+description: Något fungerar inte som det ska
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Vad händer?
+      description: Beskriv felet. Klistra gärna in felmeddelandet.
+      placeholder: När jag fyller i kontaktformuläret och klickar "Skicka meddelande" får jag 500 Internal Server Error.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Hur återskapar man det?
+      placeholder: |
+        1. Gå till /kontakt
+        2. Fyll i formuläret
+        3. Klicka "Skicka meddelande"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Vad borde hända?
+  - type: dropdown
+    id: env
+    attributes:
+      label: Var?
+      options:
+        - Produktion
+        - Testmiljö
+        - Lokalt
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Sida/URL
+      placeholder: https://…/kontakt

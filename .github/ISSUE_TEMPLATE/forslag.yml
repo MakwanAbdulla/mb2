@@ -1,0 +1,32 @@
+name: Förslag / ny funktion
+description: En ny funktion, förbättring eller idé
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: Bakgrund
+      description: Vilket problem löser det här? Vem har nytta av det?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Förslag
+      description: Hur skulle det kunna fungera? Skisser, länkar och exempel från andra system är välkomna.
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Var i koden (om du vet)
+      description: Filer, modeller eller vyer som berörs.
+  - type: textarea
+    id: done
+    attributes:
+      label: Klart när
+      description: Hur vet vi att det är klart? En checklista fungerar bra.
+      placeholder: |
+        - [ ] …
+        - [ ] Tester
+        - [ ] API-endpoint + openapi.yaml (se modulchecklistan i CLAUDE.md)

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -l *)",
+      "Bash(php artisan route:list *)",
+      "Bash(php artisan migrate:status *)",
+      "Bash(php artisan test *)",
+      "Bash(composer show *)",
+      "Bash(composer audit)",
+      "Bash(composer outdated *)",
+      "Bash(curl -s *)",
+      "Bash(git check-ignore *)",
+      "mcp__laravel-boost__search-docs",
+      "mcp__laravel-boost__database-schema",
+      "mcp__laravel-boost__database-query"
+    ]
+  }
+}

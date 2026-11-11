@@ -1,0 +1,30 @@
+{
+    "name": "membrum2",
+    "initializeCommand": "docker build --target dev -t membrum2-app-dev .",
+    "dockerComposeFile": ["../docker-compose.yml", "docker-compose.yml"],
+    "service": "app",
+    "workspaceFolder": "/var/www/html",
+    "remoteUser": "dev",
+    "updateRemoteUserUID": true,
+    "shutdownAction": "stopCompose",
+
+    "forwardPorts": [8000],
+    "portsAttributes": {
+        "8000": { "label": "Armagedon (php artisan serve)", "onAutoForward": "notify" }
+    },
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "bmewburn.vscode-intelephense-client",
+                "bradlc.vscode-tailwindcss",
+                "onecentlin.laravel-blade",
+                "onecentlin.laravel5-snippets",
+                "amiralizadeh9480.laravel-extra-intellisense",
+                "ryannaddy.laravel-artisan",
+                "mikestead.dotenv",
+                "editorconfig.editorconfig"
+            ]
+        }
+    }
+}

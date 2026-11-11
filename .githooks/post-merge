@@ -1,0 +1,11 @@
+#!/bin/bash
+# Runs after `git merge` / `git pull` (including fast-forwards).
+# ORIG_HEAD is set by git to whatever HEAD pointed to before the merge.
+"$(git rev-parse --show-toplevel)/.githooks/check-deps.sh" "ORIG_HEAD" "HEAD"
+
+# Bootstrap Icons are gitignored and released on their own schedule, so check
+# on every pull. icons:sync skips the download when the latest version is
+# already installed. Not done on checkout: the icons don't depend on the
+# branch, and GitHub allows 60 unauthenticated API calls an hour.
+cd "$(git rev-parse --show-toplevel)" && php artisan icons:sync \
+    || echo "⚠ Kunde inte kontrollera Bootstrap Icons — kör 'php artisan icons:sync' för hand."

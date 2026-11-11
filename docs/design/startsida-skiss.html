@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Startsida – skiss (#106)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Skiss för issue #106 · Ny startsida byggd av block ────────────────────
+   Fristående fil. Färger och regler från docs/design/brand.md.
+   Allt innehåll är exempeldata. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+    font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    background: #e4e4e7;
+    color: #18181b;
+    -webkit-font-smoothing: antialiased;
+}
+svg.bi { width: 1em; height: 1em; fill: currentColor; flex-shrink: 0; }
+a { color: inherit; text-decoration: none; }
+
+/* ── Verktygsrad (bara skissen) ─────────────────────────────────────────── */
+.proto-bar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem;
+    padding: .75rem 1rem;
+    background: #18181b; color: #e4e4e7;
+    font-size: .8125rem;
+    box-shadow: 0 1px 0 rgba(255,255,255,.06);
+}
+.proto-bar strong { color: #fff; font-weight: 600; }
+.proto-bar .proto-title { display: flex; align-items: center; gap: .5rem; margin-right: auto; }
+.proto-bar .proto-title span { color: #a1a1aa; }
+.seg { display: inline-flex; padding: 2px; border-radius: .5rem; background: #27272a; }
+.seg button {
+    font: inherit; font-size: .75rem; font-weight: 500;
+    display: inline-flex; align-items: center; gap: .375rem;
+    padding: .375rem .75rem; border: 0; border-radius: .375rem;
+    background: transparent; color: #a1a1aa; cursor: pointer;
+}
+.seg button:hover { color: #fff; }
+.seg button[aria-pressed="true"] { background: #fddd10; color: #231f20; }
+.seg button:focus-visible { outline: 3px solid #fbc712; outline-offset: 2px; }
+
+.stage { padding: 1.5rem 1rem 4rem; }
+.stage.is-mobile .site {
+    max-width: 390px;
+    border-radius: 2rem;
+    border: 10px solid #18181b;
+    box-shadow: 0 25px 60px -15px rgba(0,0,0,.4);
+}
+
+/* ── Webbplatsen ────────────────────────────────────────────────────────── */
+.site {
+    /* Ljust tema */
+    --bg: #ffffff;
+    --bg-alt: #fafafa;
+    --surface: #ffffff;
+    --border: #e4e4e7;
+    --text: #18181b;
+    --text-2: #3f3f46;
+    --muted: #71717a;
+    --brand: #fddd10;
+    --brand-hover: #fee81b;
+    --saffron: #fbc712;
+    --brand-dark: #231f20;
+    --orange: #eb8111;
+    --violet: #4c1d95;
+    --violet-light: #7c3aed;
+    --violet-tint: #ede9fe;
+    --orange-tint: #fff4e5;
+    --green-bg: #dcfce7; --green-fg: #166534;
+    --amber-bg: #fef3c7; --amber-fg: #92400e;
+    --date-bg: #fefce8; --date-fg: #231f20;
+
+    container-type: inline-size;
+    container-name: site;
+    max-width: 1280px;
+    margin: 0 auto;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    transition: max-width .3s ease;
+}
+.site[data-theme="dark"] {
+    --bg: #1c1a1b;
+    --bg-alt: #232021;
+    --surface: #27272a;
+    --border: #3f3f46;
+    --text: #ffffff;
+    --text-2: #d4d4d8;
+    --muted: #a1a1aa;
+    --violet-tint: rgba(124,58,237,.18);
+    --orange-tint: rgba(235,129,17,.14);
+    --green-bg: rgba(22,163,74,.2); --green-fg: #4ade80;
+    --amber-bg: rgba(217,119,6,.2); --amber-fg: #fbbf24;
+    --date-bg: rgba(253,221,16,.08); --date-fg: #fef3c7;
+}
+
+/* Gäst / medlem */
+.site[data-user="guest"] .only-member { display: none !important; }
+.site[data-user="member"] .only-guest { display: none !important; }
+
+/* Blocketiketter */
+.block { position: relative; }
+.block-label {
+    display: none;
+    position: absolute; top: .5rem; left: .5rem; z-index: 5;
+    padding: .2rem .55rem; border-radius: 999px;
+    background: #231f20; color: #fddd10;
+    font-size: .6875rem; font-weight: 600; letter-spacing: .02em;
+    box-shadow: 0 0 0 2px #fddd10;
+}
+.site[data-labels="on"] .block { outline: 2px dashed rgba(235,129,17,.7); outline-offset: -2px; }
+.site[data-labels="on"] .block-label { display: block; }
+
+.wrap { max-width: 72rem; margin: 0 auto; padding-inline: 1.25rem; }
+@container site (min-width: 720px) { .wrap { padding-inline: 2rem; } }
+
+/* Knappar (motsvarar .btn-* i app.css) */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+    padding: .7rem 1.2rem; border-radius: .5rem;
+    font-size: .9375rem; font-weight: 600; line-height: 1.2;
+    border: 1px solid transparent; cursor: pointer;
+    transition: background .15s, border-color .15s;
+}
+.btn:focus-visible { outline: 3px solid var(--saffron); outline-offset: 2px; }
+.btn-primary { background: var(--brand); color: var(--brand-dark); }
+.btn-primary:hover { background: var(--saffron); }
+.btn-ghost-light { color: #fff; border-color: rgba(255,255,255,.35); }
+.btn-ghost-light:hover { background: rgba(255,255,255,.08); border-color: #fff; }
+.btn-dark { background: var(--brand-dark); color: #fff; }
+.btn-dark:hover { background: #000; }
+.btn-outline-dark { color: var(--brand-dark); border-color: rgba(35,31,32,.4); }
+.btn-outline-dark:hover { background: rgba(35,31,32,.08); }
+.btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border); }
+.btn-secondary:hover { border-color: var(--muted); }
+.btn-sm { padding: .45rem .8rem; font-size: .8125rem; }
+.btn-discord { background: #5865f2; color: #fff; }   /* Discords egen färg – bara på Discord-knappar */
+.btn-discord:hover { background: #4752c4; }
+.inline-discord {
+    display: inline-flex; align-items: center; justify-content: center; vertical-align: middle;
+    width: 1.35rem; height: 1.35rem; margin-left: .3rem; border-radius: 999px;
+    background: #5865f2; color: #fff; font-size: .75rem;
+}
+.inline-discord:hover { background: #4752c4; }
+.inline-discord:focus-visible { outline: 3px solid var(--saffron); outline-offset: 2px; }
+.discord-block { padding-block: 0 3.5rem; background: var(--bg-alt); }
+.section-violet-band + .discord-block { background: var(--bg-alt); }
+.discord-card {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 1.25rem;
+    padding: 1.75rem; border-radius: 1.25rem;
+    background: var(--surface); border: 1px solid var(--border);
+    box-shadow: 0 12px 32px -18px rgba(88,101,242,.45);
+}
+.discord-icon { width: 3.5rem; height: 3.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; background: #5865f2; color: #fff; font-size: 1.75rem; flex-shrink: 0; }
+.discord-text h2 { margin: 0; font-size: 1.375rem; }
+.discord-text p { margin: .4rem 0 0; color: var(--text-2); line-height: 1.55; }
+.discord-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+@container site (min-width: 720px) {
+    .discord-card { flex-direction: row; align-items: center; padding: 2rem 2.25rem; }
+    .discord-text { flex: 1; }
+}
+
+/* Sektioner */
+.section { padding-block: 3.5rem; }
+@container site (min-width: 720px) { .section { padding-block: 5rem; } }
+.section-alt { background: var(--bg-alt); }
+/* "Om föreningen": vit, neutral */
+.section-soft-violet { background: var(--bg); }
+/* "Våra grupper": mjukt band – vitt glider in i lavendel och ut igen,
+   så att den violetta sektionen nås gradvis. Inga hårda kanter. */
+.section-violet-band {
+    --lav: #f4f0ff;
+    background: linear-gradient(180deg,
+        var(--bg) 0%,
+        var(--lav) 28%,
+        var(--lav) 72%,
+        var(--bg-alt) 100%);
+}
+.site[data-theme="dark"] .section-violet-band { --lav: #231e2c; }
+.section-violet-band .card { box-shadow: 0 8px 24px -16px rgba(76,29,149,.35); }
+.section-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: .75rem 1.5rem; margin-bottom: 2rem; }
+.eyebrow { font-size: .75rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 .5rem; }
+.h2 { font-size: 1.75rem; line-height: 1.15; font-weight: 700; margin: 0; letter-spacing: -.01em; }
+@container site (min-width: 720px) { .h2 { font-size: 2.25rem; } }
+.lead { color: var(--text-2); line-height: 1.6; margin: .5rem 0 0; max-width: 40rem; }
+.more { display: inline-flex; align-items: center; gap: .375rem; font-size: .875rem; font-weight: 600; color: var(--text); border-bottom: 2px solid var(--brand); padding-bottom: 2px; }
+.more:hover { border-color: var(--orange); }
+.divider { height: 3px; background: linear-gradient(90deg, #fddd10, #eb8111, #4c1d95); }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 1rem; }
+.badge { display: inline-flex; align-items: center; gap: .3rem; padding: .15rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 500; }
+.badge-green { background: var(--green-bg); color: var(--green-fg); }
+.badge-amber { background: var(--amber-bg); color: var(--amber-fg); }
+.chip { display: inline-flex; align-items: center; gap: .3rem; padding: .15rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 500; background: var(--bg-alt); border: 1px solid var(--border); color: var(--text-2); }
+
+/* ── Sidhuvud (befintlig ram, oförändrad) ───────────────────────────────── */
+.topbar { border-bottom: 1px solid var(--border); background: var(--bg); }
+.topbar .wrap { display: flex; align-items: center; gap: 1rem; height: 4rem; }
+.logo img { height: 2rem; display: block; }
+.logo .logo-dark { display: none; }
+.site[data-theme="dark"] .logo .logo-light { display: none; }
+.site[data-theme="dark"] .logo .logo-dark { display: block; }
+.nav { display: none; gap: 1.5rem; font-size: .875rem; color: var(--text-2); margin-left: 1.5rem; }
+.nav a { display: inline-flex; align-items: center; gap: .25rem; }
+.nav a:hover { color: var(--text); }
+.top-actions { margin-left: auto; display: flex; align-items: center; gap: .75rem; font-size: .875rem; }
+.top-actions .login { color: var(--text-2); display: none; }
+.hamburger { display: inline-flex; font-size: 1.5rem; color: var(--text-2); }
+.avatar { width: 2rem; height: 2rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: var(--violet); color: #fff; font-size: .8125rem; font-weight: 600; }
+@container site (min-width: 720px) {
+    .nav { display: flex; }
+    .top-actions .login { display: inline; }
+    .hamburger { display: none; }
+}
+
+/* ── Ny meny för startsidan: smälter ihop med heron ─────────────────────── */
+.site[data-header="new"] { position: relative; }
+.site[data-header="new"] .topbar {
+    position: absolute; inset: 0 0 auto 0; z-index: 10;
+    background: transparent; border-bottom-color: transparent;
+}
+.site[data-header="new"] .topbar .wrap { height: 5.5rem; }
+.site[data-header="new"] .logo img { height: 2.5rem; }
+.site[data-header="new"] .hero { padding-top: calc(3rem + 5.5rem); }
+@container site (min-width: 720px) {
+    .site[data-header="new"] .hero { padding-top: calc(5rem + 5.5rem); }
+    .site[data-header="new"] .logo img { height: 3.25rem; }
+    .site[data-header="new"] .top-actions { font-size: 1rem; gap: 1rem; }
+    .site[data-header="new"] .top-actions .btn-sm { padding: .6rem 1.1rem; font-size: .9375rem; }
+    .site[data-header="new"] .nav {
+        position: absolute; left: 50%; transform: translateX(-50%);
+        margin: 0; gap: .25rem; padding: .3rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.65); border: 1px solid rgba(35,31,32,.08);
+        box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px -12px rgba(35,31,32,.15);
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .site[data-header="new"][data-theme="dark"] .nav { background: rgba(39,39,42,.6); border-color: rgba(255,255,255,.08); }
+    .site[data-header="new"] .nav a { padding: .55rem 1.1rem; border-radius: 999px; color: var(--text-2); font-weight: 500; font-size: 1rem; }
+    .site[data-header="new"] .nav a:hover { background: var(--surface); color: var(--text); }
+    .site[data-header="new"] .top-actions .login { font-weight: 500; }
+}
+.site[data-header="new"] .topbar .wrap { position: relative; }
+
+/* ── Block: Hero ────────────────────────────────────────────────────────── */
+.hero {
+    /* Ljus, luftig hero – samma toning som sidhuvudet på övriga sidor, fast starkare */
+    --hero-bg: linear-gradient(135deg, #fffbea 0%, #fff8f0 45%, #f6f3ff 100%);
+    --hero-hex: rgba(35,31,32,.045);
+    --hero-glow: rgba(253,221,16,.22);
+    --mark: rgba(253,221,16,.55);
+    position: relative; isolation: isolate;
+    background: var(--hero-bg); color: var(--text);
+    padding-block: 4rem 3.5rem;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+}
+.site[data-theme="dark"] .hero {
+    --hero-bg: linear-gradient(135deg, #262221 0%, #1f1c1c 50%, #211d2a 100%);
+    --hero-hex: rgba(255,255,255,.035);
+    --hero-glow: rgba(253,221,16,.08);
+    --mark: rgba(253,221,16,.3);
+}
+.hero::before {  /* sexkantsmönster, som i logotypen – tonas ut åt vänster */
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='98' viewBox='0 0 56 98'%3E%3Cpath d='M28 1 L55 17 L55 49 L28 65 L1 49 L1 17 Z M28 65 L28 97' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E");
+    background-size: 56px 98px;
+    opacity: .05;
+    -webkit-mask-image: linear-gradient(100deg, transparent 35%, #000 85%);
+            mask-image: linear-gradient(100deg, transparent 35%, #000 85%);
+}
+.site[data-theme="dark"] .hero::before { filter: invert(1); opacity: .06; }
+.hero::after {   /* mjukt varmt sken */
+    content: ""; position: absolute; z-index: -1;
+    width: 50rem; height: 50rem; right: -22rem; top: -26rem;
+    background: radial-gradient(circle, var(--hero-glow), transparent 60%);
+}
+.hero-inner { max-width: 44rem; }
+.hero-grid { display: grid; gap: 2.5rem; align-items: center; }
+@container site (min-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 4rem; } }
+
+/* Veckoschema-kort i heron */
+.week {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 1rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 32px -12px rgba(35,31,32,.18);
+    overflow: hidden;
+}
+.site[data-theme="dark"] .week { box-shadow: 0 12px 32px -12px rgba(0,0,0,.6); }
+.now { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .6rem; padding: .75rem 1.25rem; background: var(--green-bg); color: var(--green-fg); font-size: .875rem; border-bottom: 1px solid var(--border); }
+.now-txt b { font-weight: 600; }
+.now-dot { width: .6rem; height: .6rem; border-radius: 999px; background: currentColor; box-shadow: 0 0 0 0 currentColor; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(22,163,74,.5); } 70% { box-shadow: 0 0 0 8px rgba(22,163,74,0); } 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); } }
+.now .example-flag { margin-left: auto; }
+.week-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem .5rem; }
+.week-head > span:first-child { display: inline-flex; align-items: center; gap: .5rem; font-weight: 600; }
+.week-head .bi { color: var(--orange); }
+.week-sub { font-size: .8125rem; color: var(--muted); }
+.week ul { list-style: none; margin: 0; padding: .25rem .5rem .5rem; }
+.week li { display: flex; align-items: center; gap: .875rem; padding: .625rem .75rem; border-radius: .75rem; }
+.week li + li { margin-top: .125rem; }
+.week .day {
+    flex-shrink: 0; width: 2.75rem; height: 2.75rem; border-radius: .625rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--bg-alt); border: 1px solid var(--border);
+    font-size: .8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-2);
+}
+.week li:last-child .day { color: #dc2626; }  /* söndag är röd */
+.site[data-theme="dark"] .week li:last-child .day { color: #f87171; }
+.week .what { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.week .what b { font-weight: 600; }
+.week .what small { font-size: .8125rem; color: var(--muted); }
+.week li.is-next { background: var(--date-bg); }
+.week li.is-next .day { background: var(--brand); border-color: var(--brand); color: var(--brand-dark); }
+.week .tag { font-size: .6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text-2); display: inline-flex; align-items: center; gap: .35rem; }
+.week .tag::before { content: ""; width: .45rem; height: .45rem; border-radius: 999px; background: var(--orange); }
+.week-foot { display: flex; align-items: center; gap: .5rem; padding: .75rem 1.25rem; border-top: 1px solid var(--border); background: var(--bg-alt); font-size: .8125rem; color: var(--muted); }
+.week-foot .bi { color: var(--orange); }
+.hero .kicker { display: inline-flex; align-items: center; gap: .5rem; padding: .3rem .75rem; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); font-size: .8125rem; color: var(--text-2); }
+.hero .kicker .dot { width: .5rem; height: .5rem; border-radius: 999px; background: var(--brand); box-shadow: 0 0 0 3px rgba(253,221,16,.25); }
+.hero h1 { font-size: 2.5rem; line-height: 1.08; font-weight: 700; letter-spacing: -.02em; margin: 0; }
+.swoosh-word { position: relative; white-space: nowrap; }
+.swoosh-word svg { position: absolute; left: -2%; bottom: -.2em; width: 104%; height: .3em; overflow: visible; pointer-events: none; }
+.hero h1 em {  /* handritad båge under ordet, i varumärkesgult → orange */
+    font-style: normal;
+    position: relative;
+    white-space: nowrap;
+}
+.hero h1 em svg {
+    position: absolute; left: -2%; bottom: -.22em;
+    width: 104%; height: .32em;
+    overflow: visible; pointer-events: none;
+}
+.hero p.ingress { font-size: 1.0625rem; line-height: 1.6; color: var(--text-2); margin: 1.25rem 0 0; }
+.hero-note { display: flex; align-items: center; gap: .5rem; margin: 1rem 0 0; font-size: .9375rem; color: var(--muted); }
+.hero-note .bi { color: var(--orange); }
+.hero .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+.hero .next {
+    display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem;
+    margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+    font-size: .875rem; color: var(--muted);
+}
+.hero .next span { display: inline-flex; align-items: center; gap: .375rem; }
+.hero .next b { color: var(--text); font-weight: 600; }
+.hero .next .bi { color: var(--orange); }
+@container site (min-width: 720px) {
+    .hero { padding-block: 6.5rem 5rem; }
+    .hero h1 { font-size: 4rem; }
+    .hero p.ingress { font-size: 1.25rem; }
+}
+
+/* ── Block: Mitt (inloggad) ─────────────────────────────────────────────── */
+.mine { padding-block: 2rem; background: var(--bg-alt); border-bottom: 1px solid var(--border); }
+.mine h2 { font-size: 1.125rem; margin: 0 0 1rem; }
+.mine-grid { display: grid; gap: .75rem; }
+@container site (min-width: 720px) { .mine-grid { grid-template-columns: repeat(3, 1fr); } }
+.mine .card { padding: 1.125rem 1.25rem 1.25rem; display: flex; flex-direction: column; align-items: flex-start; gap: .875rem; }
+.mine-head { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.mine-head h3 { margin: 0; font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.mine-link { display: inline-flex; align-items: center; gap: .2rem; font-size: .8125rem; font-weight: 500; color: var(--text-2); }
+.mine-link:hover { color: var(--text); }
+.mine-item { display: flex; align-items: center; gap: .875rem; }
+.mine-item .tile {
+    flex-shrink: 0; width: 3.25rem; height: 3.25rem; border-radius: .75rem;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;
+    background: var(--date-bg); color: var(--date-fg); border-top: 3px solid var(--brand);
+}
+.mine-item .tile .d { font-size: 1.375rem; font-weight: 700; }
+.mine-item .tile .m { font-size: .6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-top: .15rem; }
+.mine-item .tile.icon { font-size: 1.375rem; background: var(--violet-tint); color: var(--violet); border-top-color: var(--violet-light); }
+.site[data-theme="dark"] .mine-item .tile.icon { color: #c4b5fd; }
+.mine-item .txt { display: flex; flex-direction: column; gap: .2rem; min-width: 0; }
+.mine-item .txt b { font-size: 1rem; font-weight: 600; }
+.mine-item .txt span { display: inline-flex; align-items: center; gap: .375rem; font-size: .875rem; color: var(--text-2); }
+.mine-item .txt span .bi { color: var(--muted); }
+
+/* ── Block: Siffror ─────────────────────────────────────────────────────── */
+.stats { border-bottom: 1px solid var(--border); background: var(--bg); }
+.stats-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem 2.5rem; padding-block: 1rem; }
+.stats-title { width: 100%; text-align: center; font-size: .6875rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+@container site (min-width: 720px) { .stats-title { width: auto; } }
+.stat { display: inline-flex; align-items: center; gap: .5rem; font-size: .9375rem; color: var(--muted); }
+.stat .bi { font-size: 1rem; color: var(--orange); }
+.stat .num { font-size: 1.0625rem; font-weight: 700; color: var(--text); }
+
+/* ── Block: Våra grupper ────────────────────────────────────────────────── */
+.groups { display: grid; gap: 1rem; }
+@container site (min-width: 560px) { .groups { grid-template-columns: repeat(2, 1fr); } }
+@container site (min-width: 960px) { .groups { grid-template-columns: repeat(4, 1fr); } }
+.group { padding: 1.5rem; display: flex; flex-direction: column; gap: .75rem; transition: border-color .15s, transform .15s; }
+.group:hover { border-color: var(--muted); transform: translateY(-2px); }
+.group .icon { width: 3rem; height: 3rem; border-radius: .75rem; display: inline-flex; align-items: center; justify-content: center; background: var(--date-bg); color: var(--brand-dark); border-top: 3px solid var(--brand); font-size: 1.375rem; }
+.site[data-theme="dark"] .group .icon { color: #fde68a; }
+.group .icon { position: relative; }
+.icon-swoosh, .name-swoosh { display: none; }
+.group h3 .name { position: relative; white-space: nowrap; }
+
+/* Original: rak gul överkant bara vid hover */
+.site[data-icons="0"] .group .icon { border-top-color: transparent; transition: border-color .3s; }
+.site[data-icons="0"] .group:hover .icon,
+.site[data-icons="0"] .group:focus-visible .icon { border-top-color: var(--brand); }
+
+/* Ikoner 1: ingen ruta – gult penseldrag bakom ikonen */
+.site[data-icons="1"] .group .icon {
+    width: 4.25rem; height: 3.25rem; border: 0; border-radius: 0; color: var(--brand-dark);
+    background: none;
+}
+.site[data-icons="1"] .group .icon::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23fde047'/%3E%3Cstop offset='1' stop-color='%23fbc712'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M9 36 C 7 22, 26 12, 52 10 C 76 8, 95 15, 93 30 C 92 44, 74 54, 48 55 C 26 56, 11 50, 9 36 Z' fill='url(%23g)'/%3E%3Cpath d='M15 46 C 30 53, 62 55, 86 44' fill='none' stroke='%23f9a70d' stroke-width='3' stroke-linecap='round' opacity='.55'/%3E%3C/svg%3E") center / contain no-repeat;
+    opacity: 0; transform: scale(.7) rotate(-8deg); transition: opacity .3s, transform .35s ease-out;
+}
+.site[data-icons="1"] .group .icon { isolation: isolate; }
+.site[data-icons="1"] .group:hover .icon::before,
+.site[data-icons="1"] .group:focus-visible .icon::before { opacity: 1; transform: none; }
+.site[data-icons="1"] .group .icon .bi { transform: rotate(-6deg); }
+
+/* Ikoner 2: rutan behåller formen, men den raka gula kanten blir penseldraget */
+.site[data-icons="2"] .group .icon { border-top: 0; overflow: visible; }
+.site[data-icons="2"] .icon-swoosh { display: block; position: absolute; left: 6%; top: -.3rem; width: 88%; height: .5rem; overflow: visible; }
+.site[data-icons="2"] .icon-swoosh path { stroke-dasharray: 200; stroke-dashoffset: 200; transition: stroke-dashoffset .45s ease-out; }
+.site[data-icons="2"] .group:hover .icon-swoosh path,
+.site[data-icons="2"] .group:focus-visible .icon-swoosh path { stroke-dashoffset: 0; }
+
+/* Ikoner 4: sexkant som i logotypen – ljus och lugn, gul kant bara vid hover */
+.site[data-icons="4"] .group .icon {
+    width: 3.5rem; height: 3.9rem; border: 0; border-radius: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 112'%3E%3Cpath d='M50 6 L92 30 L92 82 L50 106 L8 82 L8 30 Z' fill='%23fffbea' stroke='%23e4e4e7' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    color: #52525b; font-size: 1.375rem; isolation: isolate; transition: color .3s;
+}
+.site[data-theme="dark"][data-icons="4"] .group .icon { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 112'%3E%3Cpath d='M50 6 L92 30 L92 82 L50 106 L8 82 L8 30 Z' fill='%232a2523' stroke='%233f3f46' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E"); color: #a1a1aa; }
+.site[data-icons="4"] .group .icon::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 112'%3E%3Cpath d='M50 6 L92 30 L92 82 L50 106 L8 82 L8 30 Z' fill='%23fffbea' stroke='%23fddd10' stroke-width='6' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    opacity: 0; transition: opacity .3s;
+}
+.site[data-theme="dark"][data-icons="4"] .group .icon::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 112'%3E%3Cpath d='M50 6 L92 30 L92 82 L50 106 L8 82 L8 30 Z' fill='%232a2523' stroke='%23fddd10' stroke-width='6' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.site[data-icons="4"] .group:hover .icon,
+.site[data-icons="4"] .group:focus-visible .icon { color: var(--brand-dark); }
+.site[data-theme="dark"][data-icons="4"] .group:hover .icon,
+.site[data-theme="dark"][data-icons="4"] .group:focus-visible .icon { color: #fde68a; }
+.site[data-icons="4"] .group:hover .icon::before,
+.site[data-icons="4"] .group:focus-visible .icon::before { opacity: 1; }
+
+/* Ikoner 3: neutral ruta, penseldraget under aktivitetens namn */
+.site[data-icons="3"] .group .icon { border-top: 0; background: var(--bg-alt); border: 1px solid var(--border); color: var(--text-2); }
+.site[data-icons="3"] .name-swoosh { display: block; position: absolute; left: -2%; bottom: -.3em; width: 104%; height: .32em; overflow: visible; }
+/* Strecket syns bara när man pekar på kortet (eller fokuserar det med tangentbordet) och ritas från vänster */
+.site[data-icons="3"] .name-swoosh path { stroke-dasharray: 200; stroke-dashoffset: 200; transition: stroke-dashoffset .45s ease-out; }
+.site[data-icons="3"] .group:hover .name-swoosh path,
+.site[data-icons="3"] .group:focus-visible .name-swoosh path { stroke-dashoffset: 0; }
+.group h3 { margin: .25rem 0 0; font-size: 1.25rem; }
+.group .when { display: inline-flex; align-items: center; gap: .4rem; font-size: .8125rem; font-weight: 600; color: var(--violet-light); }
+.site[data-theme="dark"] .group .when { color: #c4b5fd; }
+.group p { margin: 0; font-size: .9375rem; line-height: 1.55; color: var(--text-2); flex: 1; }
+.group .link { font-size: .875rem; font-weight: 600; display: inline-flex; align-items: center; gap: .375rem; }
+
+/* ── Block: Puffar ──────────────────────────────────────────────────────── */
+.puffs { display: grid; gap: 1rem; }
+@container site (min-width: 720px) { .puffs { grid-template-columns: repeat(3, 1fr); } }
+.puff { overflow: hidden; display: flex; flex-direction: column; }
+.puff .img {
+    aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center;
+    font-size: 2.75rem; color: var(--orange);
+    border-bottom: 1px solid var(--border);
+}
+.puff .img.a { background: linear-gradient(135deg, #fffbea, #fef3d6); }
+.puff .img.b { background: linear-gradient(135deg, #fff8f0, #ffecd9); }
+.puff .img.c { background: linear-gradient(135deg, #fffaf0, #fdf0dc); }
+.site[data-theme="dark"] .puff .img.a { background: linear-gradient(135deg, rgba(253,221,16,.07), rgba(253,221,16,.03)); }
+.site[data-theme="dark"] .puff .img.b { background: linear-gradient(135deg, rgba(235,129,17,.10), rgba(235,129,17,.03)); }
+.site[data-theme="dark"] .puff .img.c { background: linear-gradient(135deg, rgba(249,167,13,.08), rgba(249,167,13,.02)); }
+.puff .body { padding: 1.25rem; display: flex; flex-direction: column; gap: .5rem; flex: 1; }
+.puff h3 { margin: 0; font-size: 1.125rem; }
+.puff p { margin: 0; color: var(--text-2); font-size: .9375rem; line-height: 1.55; flex: 1; }
+.puff .link { font-size: .875rem; font-weight: 600; color: var(--orange); display: inline-flex; align-items: center; gap: .375rem; }
+
+/* Puffar som "bento": en stor utvald puff + två kompakta */
+.bento { display: grid; gap: 1rem; }
+@container site (min-width: 760px) {
+    .bento { grid-template-columns: 1.35fr 1fr; grid-template-rows: 1fr 1fr; }
+    .puff-feature { grid-row: span 2; }
+}
+.bento .card { transition: transform .2s ease, box-shadow .2s ease, border-color .2s; }
+.bento .card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px -20px rgba(35,31,32,.35); border-color: var(--muted); }
+.puff-feature { overflow: hidden; display: flex; flex-direction: column; }
+.pf-img {
+    position: relative; min-height: 11rem; flex: 1;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    background: radial-gradient(circle at 70% 30%, rgba(253,221,16,.55), transparent 55%),
+                linear-gradient(135deg, #fff6c7, #ffe3b8);
+}
+.site[data-theme="dark"] .pf-img {
+    background: radial-gradient(circle at 70% 30%, rgba(253,221,16,.18), transparent 55%),
+                linear-gradient(135deg, #2e2822, #2a221c);
+}
+.pf-img::before {  /* sexkantsmönster */
+    content: ""; position: absolute; inset: 0; opacity: .12;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='98' viewBox='0 0 56 98'%3E%3Cpath d='M28 1 L55 17 L55 49 L28 65 L1 49 L1 17 Z M28 65 L28 97' fill='none' stroke='%23eb8111' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-size: 56px 98px;
+}
+.pf-icon {
+    position: relative; width: 5.5rem; height: 5.5rem; border-radius: 1.5rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--surface); color: var(--orange); font-size: 2.75rem;
+    box-shadow: 0 18px 40px -18px rgba(235,129,17,.6);
+    transform: rotate(-6deg); transition: transform .3s ease;
+}
+.puff-feature:hover .pf-icon { transform: rotate(0deg) scale(1.05); }
+.pf-body { padding: 1.5rem; display: flex; flex-direction: column; align-items: flex-start; gap: .6rem; }
+.pf-kicker { display: inline-flex; align-items: center; gap: .4rem; font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--orange); }
+.pf-body h3 { margin: 0; font-size: 1.5rem; line-height: 1.2; }
+.pf-body p { margin: 0 0 .5rem; color: var(--text-2); line-height: 1.55; }
+.puff-small { display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem 1.25rem 1.25rem 1.25rem; position: relative; overflow: hidden; }
+.puff-small h3 { margin: 0; font-size: 1.125rem; }
+.puff-small p { margin: .35rem 0 .6rem; color: var(--text-2); font-size: .9375rem; line-height: 1.5; }
+.ps-icon {
+    flex-shrink: 0; width: 3.25rem; height: 3.25rem; border-radius: 1rem;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem;
+    transition: transform .3s ease;
+}
+.puff-small:hover .ps-icon { transform: rotate(-8deg); }
+.ps-link { display: inline-flex; align-items: center; gap: .375rem; font-size: .875rem; font-weight: 600; }
+.tint-yellow { background: linear-gradient(135deg, #fffdf0, var(--surface) 60%); }
+.tint-yellow .ps-icon { background: #fef3c7; color: #a16207; }
+.tint-orange { background: linear-gradient(135deg, #fff7ed, var(--surface) 60%); }
+.tint-orange .ps-icon { background: #ffedd5; color: #c2410c; }
+.site[data-theme="dark"] .tint-yellow { background: linear-gradient(135deg, rgba(253,221,16,.07), var(--surface) 60%); }
+.site[data-theme="dark"] .tint-orange { background: linear-gradient(135deg, rgba(235,129,17,.09), var(--surface) 60%); }
+.site[data-theme="dark"] .tint-yellow .ps-icon { background: rgba(253,221,16,.14); color: #fde68a; }
+.site[data-theme="dark"] .tint-orange .ps-icon { background: rgba(235,129,17,.16); color: #fdba74; }
+
+/* Kommande evenemang: kort med datum, tid, grupp, plats och anmälningsstatus */
+.site[data-events="examples"] .ev-empty,
+.site[data-events="empty"] .ev-examples,
+.site[data-events="empty"] .ev-flag { display: none; }
+.ev-grid { display: grid; gap: 1rem; }
+@container site (min-width: 640px) { .ev-grid { grid-template-columns: repeat(2, 1fr); } }
+@container site (min-width: 960px) { .ev-grid { grid-template-columns: repeat(3, 1fr); } }
+.ev { padding: 1.25rem; display: flex; flex-direction: column; gap: .875rem; transition: transform .2s ease, box-shadow .2s ease, border-color .2s; }
+.ev:hover { transform: translateY(-3px); box-shadow: 0 16px 36px -20px rgba(35,31,32,.35); border-color: var(--muted); }
+.ev-head { display: flex; align-items: center; gap: .875rem; }
+.ev-date { width: 3.5rem; padding: .45rem 0; border-radius: .75rem; background: var(--date-bg); color: var(--date-fg); border-top: 3px solid var(--brand); text-align: center; line-height: 1; display: flex; flex-direction: column; gap: .2rem; font-size: .6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+.ev-date b { font-size: 1.5rem; letter-spacing: 0; }
+.ev-when { display: flex; flex-direction: column; gap: .15rem; font-size: .875rem; color: var(--muted); }
+.ev-when b { color: var(--text); font-size: .9375rem; }
+.ev h3 { margin: 0; font-size: 1.1875rem; line-height: 1.3; }
+.ev-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .875rem; font-size: .8125rem; color: var(--muted); }
+.ev-meta > span:not(.chip) { display: inline-flex; align-items: center; gap: .3rem; }
+.ev-foot { margin-top: auto; padding-top: .875rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap; }
+.ev-go { display: inline-flex; align-items: center; gap: .35rem; font-size: .875rem; font-weight: 600; }
+.ev:hover .ev-go .bi { transform: translateX(3px); }
+.ev-go .bi { transition: transform .2s; }
+.badge-neutral { background: var(--bg-alt); color: var(--text-2); border: 1px solid var(--border); }
+.ev-empty .mine-link { margin-top: .25rem; }
+
+/* ── Block: Kommande evenemang ──────────────────────────────────────────── */
+.events { display: grid; gap: .75rem; }
+.event { display: flex; align-items: center; gap: 1rem; padding: .875rem 1rem; transition: border-color .15s; }
+.event:hover { border-color: var(--muted); }
+.date-tile { flex-shrink: 0; width: 3.5rem; padding: .45rem 0; border-radius: .75rem; background: var(--date-bg); color: var(--date-fg); border-top: 3px solid var(--brand); text-align: center; line-height: 1; }
+.date-tile .d { font-size: 1.5rem; font-weight: 700; }
+.date-tile .m { font-size: .6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-top: .2rem; }
+.event .info { flex: 1; min-width: 0; }
+.event .title { font-weight: 600; }
+.event .meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .75rem; font-size: .8125rem; color: var(--muted); margin-top: .3rem; }
+.event .meta span { display: inline-flex; align-items: center; gap: .3rem; }
+.event .go { color: var(--muted); font-size: 1.125rem; }
+@container site (min-width: 720px) { .events { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Block: Nyheter ─────────────────────────────────────────────────────── */
+.news { display: grid; gap: 1rem; }
+@container site (min-width: 720px) { .news { grid-template-columns: repeat(3, 1fr); } }
+.news > a { display: flex; transition: border-color .15s; }
+.news > a:hover { border-color: var(--muted); }
+.news article { padding: 1.25rem; display: flex; flex-direction: column; gap: .625rem; flex: 1; }
+.news-top { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: .25rem; }
+.news time { display: inline-flex; align-items: center; gap: .375rem; font-size: .8125rem; font-weight: 500; color: var(--text-2); }
+.news time .bi { color: var(--muted); }
+.news p { flex: 1; }
+.news-more { display: inline-flex; align-items: center; gap: .375rem; font-size: .875rem; font-weight: 600; margin-top: .25rem; }
+.news h3 { margin: 0; font-size: 1.0625rem; line-height: 1.35; }
+.news p { margin: 0; color: var(--text-2); font-size: .9375rem; line-height: 1.55; }
+
+/* Nyheter: en huvudnyhet (fäst eller senaste) + kompakt rubriklista */
+.news-lead { display: grid; overflow: hidden; transition: transform .2s ease, box-shadow .2s ease, border-color .2s; }
+.news-lead:hover { transform: translateY(-3px); box-shadow: 0 16px 36px -20px rgba(35,31,32,.35); border-color: var(--muted); }
+@container site (min-width: 760px) { .news-lead { grid-template-columns: 1fr 1.2fr; } }
+.nl-img {
+    min-height: 12rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem;
+    background: linear-gradient(135deg, #f4f4f5, #e4e4e7); color: var(--muted); font-size: .8125rem;
+}
+.nl-img .bi { font-size: 2.25rem; opacity: .6; }
+.site[data-theme="dark"] .nl-img { background: linear-gradient(135deg, #2a2a2e, #222225); }
+.nl-body { padding: 1.5rem; display: flex; flex-direction: column; gap: .75rem; }
+@container site (min-width: 760px) { .nl-body { padding: 2rem 2.25rem; justify-content: center; } }
+.nl-body .news-top { justify-content: flex-start; gap: .5rem .75rem; flex-wrap: wrap; }
+.nl-body h3 { margin: 0; font-size: 1.5rem; line-height: 1.25; }
+@container site (min-width: 760px) { .nl-body h3 { font-size: 1.75rem; } }
+.nl-body p { margin: 0; color: var(--text-2); line-height: 1.6; }
+.pin { display: inline-flex; align-items: center; gap: .3rem; font-size: .75rem; font-weight: 600; color: var(--orange); }
+.news-list { display: grid; margin-top: 1rem; border-top: 1px solid var(--border); }
+@container site (min-width: 760px) { .news-list { grid-template-columns: repeat(3, 1fr); border-top: 0; gap: 1rem; } }
+.nli { display: flex; align-items: center; gap: .875rem; padding: .875rem .25rem; border-bottom: 1px solid var(--border); }
+@container site (min-width: 760px) { .nli { padding: .875rem 0; border-bottom: 0; border-top: 2px solid var(--border); transition: border-color .2s; } .nli:hover { border-top-color: var(--brand); } }
+.nli-date { flex-shrink: 0; width: 2.75rem; text-align: center; line-height: 1; font-size: .6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); display: flex; flex-direction: column; gap: .15rem; }
+.nli-date b { font-size: 1.375rem; color: var(--text); letter-spacing: 0; }
+.nli-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .3rem; }
+.nli-txt b { font-weight: 600; line-height: 1.3; }
+.nli-txt small { display: flex; align-items: center; gap: .4rem; color: var(--muted); font-size: .8125rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nli-go { color: var(--muted); transition: transform .2s, color .2s; }
+.nli:hover .nli-go { transform: translateX(3px); color: var(--text); }
+
+/* ── Block: Fri text + Hitta oss ────────────────────────────────────────── */
+.about { display: grid; gap: 2rem; align-items: center; }
+@container site (min-width: 860px) { .about { grid-template-columns: 1fr 1.15fr; gap: 4rem; } }
+.about-img { margin: 0; }
+.about-img img, .about-ph { width: 100%; aspect-ratio: 4 / 3; border-radius: 1.25rem; object-fit: cover; display: block; }
+.about-ph {  /* reserv när sidan saknar bild: mjuk panel med sexkantsmönstret */
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem;
+    background: linear-gradient(135deg, #fffbea, #fff4e6);
+    border: 1px solid var(--border);
+    color: var(--muted); text-align: center; font-size: .875rem;
+}
+.site[data-theme="dark"] .about-ph { background: linear-gradient(135deg, #2a2523, #241f1d); }
+.about-ph::before {
+    content: ""; position: absolute; inset: 0; opacity: .07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='98' viewBox='0 0 56 98'%3E%3Cpath d='M28 1 L55 17 L55 49 L28 65 L1 49 L1 17 Z M28 65 L28 97' fill='none' stroke='%23eb8111' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-size: 56px 98px;
+}
+.about-ph > * { position: relative; }
+.about-ph > .bi { font-size: 2.5rem; color: var(--orange); opacity: .7; }
+.about-ph small { font-size: .75rem; }
+.about-text .eyebrow { margin-bottom: 1rem; }
+.prose { color: var(--text-2); line-height: 1.7; font-size: 1.0625rem; }
+.prose p { margin: 0 0 1rem; }
+.find-line { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin: 1.5rem 0; padding: 1rem 0 0; border-top: 1px solid var(--border); font-size: .875rem; color: var(--text-2); }
+.find-line li { display: inline-flex; align-items: center; gap: .4rem; }
+.find-line .bi { color: var(--orange); }
+.find { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; align-self: start; }
+.find h3 { margin: 0; font-size: 1.125rem; display: flex; align-items: center; gap: .5rem; }
+.find h3 .bi { color: var(--orange); }
+.find ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; font-size: .9375rem; color: var(--text-2); }
+.find li { display: flex; gap: .625rem; line-height: 1.45; }
+.find li .bi { margin-top: .2rem; color: var(--muted); }
+
+/* ── Block: CTA ─────────────────────────────────────────────────────────── */
+.cta { padding-block: 0 3.5rem; }
+.cta-panel {
+    position: relative; overflow: hidden; isolation: isolate;
+    display: flex; flex-direction: column; gap: 1.5rem;
+    padding: 2rem 1.5rem; border-radius: 1.25rem;
+    background: linear-gradient(135deg, #fffbea 0%, #fff8f0 50%, #f6f3ff 100%);
+    border: 1px solid var(--border);
+}
+.site[data-theme="dark"] .cta-panel { background: linear-gradient(135deg, #2a2523 0%, #242021 50%, #251f2e 100%); }
+.cta-panel::before {  /* tunn varumärkeslinje överst */
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+    background: linear-gradient(90deg, #fddd10, #eb8111, #4c1d95);
+}
+.cta h2 { margin: 0; font-size: 1.625rem; line-height: 1.2; letter-spacing: -.01em; }
+.cta p { margin: .5rem 0 0; font-size: 1.0625rem; line-height: 1.55; max-width: 36rem; color: var(--text-2); }
+.cta .actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+@container site (min-width: 720px) {
+    .cta { padding-block: 0 5rem; }
+    .cta-panel { flex-direction: row; align-items: center; justify-content: space-between; padding: 3rem; }
+    .cta h2 { font-size: 2rem; }
+}
+
+/* ── Sidfot (befintlig ram, oförändrad) ─────────────────────────────────── */
+.footer { background: var(--bg-alt); border-top: 1px solid var(--border); padding-block: 2.5rem 1.75rem; font-size: .875rem; color: var(--muted); }
+.footer-top { display: flex; flex-direction: column; gap: 1rem; padding-bottom: 1.75rem; }
+@container site (min-width: 720px) { .footer-top { flex-direction: row; align-items: center; gap: 2rem; } }
+.footer-logo img { height: 2.25rem; }
+.footer-desc { margin: 0; line-height: 1.6; max-width: 34rem; }
+.footer-bottom { display: flex; flex-direction: column; gap: 1rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+@container site (min-width: 720px) { .footer-bottom { flex-direction: row; align-items: center; justify-content: space-between; } }
+.footer-links { display: flex; flex-wrap: wrap; gap: .5rem 1.75rem; }
+.footer-links a { color: var(--text-2); font-weight: 500; }
+.footer-links a:hover { color: var(--text); }
+.footer-copy { font-size: .8125rem; }
+
+/* Markering för exempelinnehåll (bara skissen) */
+.example-flag {
+    display: inline-flex; align-items: center; gap: .3rem; vertical-align: middle;
+    margin-left: .5rem; padding: .2rem .6rem; border-radius: 999px;
+    border: 1px dashed var(--orange); color: var(--orange); background: var(--orange-tint);
+    font-size: .75rem; font-weight: 600; letter-spacing: 0;
+}
+.cta .example-flag { margin: 0 0 .75rem; }
+
+/* Tomma lägen och ej byggda block */
+.mine-empty { display: flex; align-items: center; gap: .5rem; color: var(--muted); font-size: .9375rem; }
+.empty { padding: 2.5rem 1.5rem; display: flex; flex-direction: column; align-items: center; gap: .75rem; text-align: center; color: var(--muted); }
+.empty p { margin: 0; }
+.empty-icon { width: 3.5rem; height: 3.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; background: var(--bg-alt); border: 1px solid var(--border); font-size: 1.5rem; }
+.pending-grid { display: grid; gap: 1rem; }
+@container site (min-width: 720px) { .pending-grid { grid-template-columns: repeat(3, 1fr); } }
+.pending { display: flex; flex-direction: column; align-items: center; gap: .35rem; padding: 1.5rem; border: 2px dashed var(--border); border-radius: 1rem; color: var(--muted); text-align: center; font-size: .875rem; }
+.pending .bi { font-size: 1.25rem; }
+.pending b { color: var(--text-2); font-size: 1rem; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="proto-bar" role="toolbar" aria-label="Skissinställningar">
+    <div class="proto-title"><strong>Startsida – skiss</strong> <span>#106 · riktig data från dev-databasen, inte den riktiga sidan</span></div>
+    <div class="seg" data-group="device">
+        <button type="button" data-value="desktop" aria-pressed="true"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M0 4s0-2 2-2h12s2 0 2 2v6s0 2-2 2h-4q0 1 .25 1.5H11a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1h.75Q6 13 6 12H2s-2 0-2-2zm1.398-.855a.76.76 0 0 0-.254.302A1.5 1.5 0 0 0 1 4.01V10c0 .325.078.502.145.602q.105.156.302.254a1.5 1.5 0 0 0 .538.143L2.01 11H14c.325 0 .502-.078.602-.145a.76.76 0 0 0 .254-.302 1.5 1.5 0 0 0 .143-.538L15 9.99V4c0-.325-.078-.502-.145-.602a.76.76 0 0 0-.302-.254A1.5 1.5 0 0 0 13.99 3H2c-.325 0-.502.078-.602.145"/>
+</svg> Dator</button>
+        <button type="button" data-value="mobile" aria-pressed="false"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+  <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+</svg> Mobil</button>
+    </div>
+    <div class="seg" data-group="theme">
+        <button type="button" data-value="light" aria-pressed="true"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6m0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/>
+</svg> Ljust</button>
+        <button type="button" data-value="dark" aria-pressed="false"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M4.858 1.311A7.27 7.27 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.32 7.32 0 0 0 5.205-2.162q-.506.063-1.029.063c-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286"/>
+  <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.73 1.73 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.73 1.73 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.73 1.73 0 0 0 1.097-1.097zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"/>
+</svg> Mörkt</button>
+    </div>
+    <div class="seg" data-group="user">
+        <button type="button" data-value="guest" aria-pressed="true"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+</svg> Gäst</button>
+        <button type="button" data-value="member" aria-pressed="false"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+  <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+</svg> Inloggad</button>
+    </div>
+    <div class="seg" data-group="header">
+        <button type="button" data-value="old" aria-pressed="false">Meny: nuvarande</button>
+        <button type="button" data-value="new" aria-pressed="true">Meny: ny</button>
+    </div>
+    <div class="seg" data-group="icons">
+        <button type="button" data-value="0" aria-pressed="true">Ikoner: original</button>
+        <button type="button" data-value="1" aria-pressed="false">1</button>
+        <button type="button" data-value="2" aria-pressed="false">2</button>
+        <button type="button" data-value="3" aria-pressed="false">3</button>
+        <button type="button" data-value="4" aria-pressed="false">4 · sexkant</button>
+    </div>
+    <div class="seg" data-group="events">
+        <button type="button" data-value="examples" aria-pressed="true">Evenemang: exempel</button>
+        <button type="button" data-value="empty" aria-pressed="false">tomt</button>
+    </div>
+    <div class="seg" data-group="labels">
+        <button type="button" data-value="off" aria-pressed="true">Dölj block</button>
+        <button type="button" data-value="on" aria-pressed="false"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M5 2V0H0v5h2v6H0v5h5v-2h6v2h5v-5h-2V5h2V0h-5v2zm6 1v2h2v6h-2v2H5v-2H3V5h2V3zm1-2h3v3h-3zm3 11v3h-3v-3zM4 15H1v-3h3zM1 4V1h3v3z"/>
+</svg> Visa block</button>
+    </div>
+</div>
+
+<div class="stage" id="stage">
+<div class="site" id="site" data-theme="light" data-user="guest" data-labels="off" data-header="new" data-icons="0" data-events="examples">
+
+    <!-- Befintlig ram: sidhuvud (meny från navigation_items) -->
+    <header class="topbar">
+        <div class="wrap">
+            <span class="hamburger"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+</svg></span>
+            <a href="#" class="logo">
+                <img class="logo-light" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgoKPHN2ZwogICB3aWR0aD0iMjQyIgogICBoZWlnaHQ9Ijg0IgogICB2aWV3Qm94PSIzMCA2MCAyNDIgODQiCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9InN2ZzEiCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGRlZnMKICAgICBpZD0iZGVmczEiPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDIiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTEzLjc0MTUsLTE5LjQyOTA5OCkiCiAgICAgICAgIGlkPSJwYXRoMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoNCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMTMuNzQxNSwtMzIuOTk1NTAzKSIKICAgICAgICAgaWQ9InBhdGg0IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGg2Ij4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE0OC42MTAyLC0xMDIuNzA3OSkiCiAgICAgICAgIGlkPSJwYXRoNiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC05NC4wNDcyMDUsLTExMC43OTI5KSIKICAgICAgICAgaWQ9InBhdGg4IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxMCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC05My4wNDU3LC0xMjMuODk1NCkiCiAgICAgICAgIGlkPSJwYXRoMTAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDEyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTg3LjcyNCwtMTAyLjM4NjcxKSIKICAgICAgICAgaWQ9InBhdGgxMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMTQiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTExLjY4MiwtMTgyLjA2MzkpIgogICAgICAgICBpZD0icGF0aDE0IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxNiI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMTUuODAxMTEsLTE4NC44MjkpIgogICAgICAgICBpZD0icGF0aDE2IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNjguNzg4NCwtMTE4Ljg4MTMxKSIKICAgICAgICAgaWQ9InBhdGgxOCIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMjAiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzIyLjE1ODUxLC0xNDEuMDI5MikiCiAgICAgICAgIGlkPSJwYXRoMjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDIyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTM4NS4xMjM4MSwtOTUuMDE4KSIKICAgICAgICAgaWQ9InBhdGgyMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMjQiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNDI1LjI1NDcxLC0xMDUuMjMzOCkiCiAgICAgICAgIGlkPSJwYXRoMjQiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDI2Ij4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQ2NS44NjAyMSwtMTI1LjQyNjIpIgogICAgICAgICBpZD0icGF0aDI2IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgyOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01MTguMzkyNDIsLTEzMC40MTQpIgogICAgICAgICBpZD0icGF0aDI4IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgzMCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01NjMuNTMwMTIsLTEwNi41NTA3MSkiCiAgICAgICAgIGlkPSJwYXRoMzAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTYwNC4wNjUyMiwtMTE3LjcyNDEpIgogICAgICAgICBpZD0icGF0aDMyIiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgzNCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02NjUuMzk0MzIsLTk1LjAxOCkiCiAgICAgICAgIGlkPSJwYXRoMzQiIC8+CiAgICA8L2NsaXBQYXRoPgogIDwvZGVmcz4KICA8ZwogICAgIGlkPSJsYXllcjEiCiAgICAgc3R5bGU9ImRpc3BsYXk6aW5saW5lIj4KICAgIDxnCiAgICAgICBpZD0iZzYyIgogICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMC4yNjQ1ODMzMywwLDAsMC4yNjQ1ODMzMywyNS4yMTIxMDcsNjEuMjkyNTU5KSI+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMSIKICAgICAgICAgZD0iTSAwLDAgQyAtMi4yMTcsMCAtNC40MzUsMC41NzMgLTYuNDIxLDEuNzIxIEwgLTgwLjE1NCw0NC4yOSBjIC0zLjk3NCwyLjI5NSAtNi40MjIsNi41MzUgLTYuNDIyLDExLjEyMyB2IDg1LjEzOSBjIDAsNC41ODkgMi40NDgsOC44MjggNi40MjIsMTEuMTIzIGwgNzMuNzMzLDQyLjU2OSBjIDEuOTg2LDEuMTQ3IDQuMjA0LDEuNzIxIDYuNDIxLDEuNzIxIDIuMjE4LDAgNC40MzUsLTAuNTc0IDYuNDIyLC0xLjcyMSBsIDczLjczMiwtNDIuNTY5IGMgMy45NzMsLTIuMjk1IDYuNDIyLC02LjUzNCA2LjQyMiwtMTEuMTIzIFYgNTUuNDEzIGMgMCwtNC41ODggLTIuNDQ5LC04LjgyOCAtNi40MjIsLTExLjEyMyBMIDYuNDIyLDEuNzIxIEMgNC40MzUsMC41NzMgMi4yMTgsMCAwLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZGRkMTA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxNTEuNjU1MzMsMjg2Ljc1NTg3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMyIKICAgICAgICAgZD0ibSAwLDAgYyAtMC44MDYsMCAtMS42MTIsMC4yMDkgLTIuMzM1LDAuNjI2IGwgLTY5LjA2MiwzOS44NzMgYyAtMS40NDUsMC44MzQgLTIuMzM1LDIuMzc2IC0yLjMzNSw0LjA0NCB2IDc5Ljc0NiBjIDAsMS42NjkgMC44OSwzLjIxIDIuMzM1LDQuMDQ0IGwgNjkuMDYyLDM5Ljg3MyBjIDAuNzIzLDAuNDE4IDEuNTI5LDAuNjI2IDIuMzM1LDAuNjI2IDAuODA3LDAgMS42MTMsLTAuMjA4IDIuMzM1LC0wLjYyNiBsIDY5LjA2MSwtMzkuODczIGMgMS40NDYsLTAuODM0IDIuMzM2LC0yLjM3NSAyLjMzNiwtNC4wNDQgViA0NC41NDMgYyAwLC0xLjY2OCAtMC44OSwtMy4yMSAtMi4zMzYsLTQuMDQ0IEwgMi4zMzUsMC42MjYgQyAxLjYxMywwLjIwOSAwLjgwNywwIDAsMCIKICAgICAgICAgc3R5bGU9ImZpbGw6IzIzMWYyMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDE1MS42NTUzMywyNjguNjY3MzMpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGg0KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGg1IgogICAgICAgICBkPSJtIDAsMCAtMjguMjI0LC01NC40MDkgNTYuNDQ4LDMyLjgyMyB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZmJjNzEyO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTk4LjE0NjkzLDE3NS43MTc0NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDYpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDciCiAgICAgICAgIGQ9Ik0gMCwwIFYgMCBMIDEuNTg1LDYuNDA3IFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiM0ZjRjNGQ7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxMjUuMzk2MjcsMTY0LjkzNzQ3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoOCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoOSIKICAgICAgICAgZD0ibSAwLDAgLTUuOTUsMTQuNjIgLTEzLjQ2NSwtMzkuNTA4IDE1LjQ2Niw4LjkyOCB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZmJjNzA3O2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTI0LjA2MDkzLDE0Ny40Njc0NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDEwKSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxMSIKICAgICAgICAgZD0iTSAwLDAgLTM3LjE4MSwtMjEuNDYyIC05LjI5NCwtMzcuNTYzIFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmOWE3MGQ7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxMTYuOTY1MzMsMTc2LjE0NTczKSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMTIpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDEzIgogICAgICAgICBkPSJNIDAsMCAtMjkuNTQsLTExOS4zODQgMCwtMTM2LjQzOCBaIgogICAgICAgICBzdHlsZT0iZmlsbDojZWI4MTExO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTQ4LjkwOTMzLDY5LjkwOTQ2NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDE0KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxNSIKICAgICAgICAgZD0iTSAwLDAgViAtMTM2LjQyMiBMIDI5LjQ4NywtNzkuNTggWiIKICAgICAgICAgc3R5bGU9ImZpbGw6I2ZlZTgxYjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDE1NC40MDE0Nyw2Ni4yMjI2NjcpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgxNikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMTciCiAgICAgICAgIGQ9Im0gMCwwIC0yLjUxNCw5LjU3OCBjIC0wLjU4NiwyLjEyOCAtMS4yOTcsNC44ODEgLTIuMTM1LDguMjYgLTAuODM4LDMuMzc4IC0xLjM5MSw1Ljc5OSAtMS42NTYsNy4yNjMgLTAuMjQsLTEuMzU3IC0wLjcxMywtMy41OTIgLTEuNDE3LC02LjcwNSBDIC04LjQyNywxNS4yODQgLTkuOTksOS4xNTIgLTEyLjQxMSwwIFogbSA2LjE0NSwtMjMuODYzIC0yLjg3MywxMC45MzQgaCAtMTguOTU1IGwgLTIuOTUzLC0xMC45MzQgSCAtMzUuOTU1IEwgLTE2LjkyLDM0LjcxOCBIIDQuMTEgbCAxOS4yNzQsLTU4LjU4MSB6IgogICAgICAgICBzdHlsZT0iZmlsbDojMjMxZjIwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMzU4LjM4NDUzLDE1NC4xNTI5MykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDE4KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxOSIKICAgICAgICAgZD0ibSAwLDAgYyAxLjM1NywwIDIuNjQ3LC0wLjEwNyAzLjg3MSwtMC4zMTkgbCAwLjg3OCwtMC4xNiAtMS4zOTcsLTE0LjcyNSBjIC0xLjI3NywwLjMxOSAtMy4wNDYsMC40NzkgLTUuMzA4LDAuNDc5IC0zLjQwNSwwIC01Ljg3OSwtMC43NzggLTcuNDIyLC0yLjMzNSAtMS41NDMsLTEuNTU2IC0yLjMxNCwtMy43OTggLTIuMzE0LC02LjcyNCB2IC0yMi4yMjcgaCAtMTUuNjAzIHYgNDUuMjEzIGggMTEuNjEyIGwgMi40MzQsLTcuMjIzIGggMC43NTkgYyAxLjMwMiwyLjM5NCAzLjExOCw0LjMzIDUuNDQ3LDUuODA2IEMgLTQuNzE2LC0wLjczOCAtMi4zNjgsMCAwLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyMzFmMjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw0MjkuNTQ0NjcsMTI0LjYyMjQpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyMCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjEiCiAgICAgICAgIGQ9Im0gMCwwIHYgMjQuNTgyIGMgMCwzLjA1OSAtMC40MTgsNS4zNTQgLTEuMjU2LDYuODgzIC0wLjgzOCwxLjUzIC0yLjE2MiwyLjI5NSAtMy45NzEsMi4yOTUgLTIuMzk0LDAgLTQuMTUsLTEuMDI1IC01LjI2NywtMy4wNzMgLTEuMTE3LC0yLjA0OSAtMS42NzYsLTUuMjU0IC0xLjY3NiwtOS42MTcgViAwIGggLTE1LjY0MyB2IDI0LjU4MiBjIDAsMy4wNTkgLTAuMzk5LDUuMzU0IC0xLjE5OCw2Ljg4MyAtMC43OTgsMS41MyAtMi4wODgsMi4yOTUgLTMuODcsMi4yOTUgLTIuNDQ4LDAgLTQuMjMsLTEuMDkxIC01LjM0OCwtMy4yNzIgLTEuMTE3LC0yLjE4MiAtMS42NzYsLTUuNzQ3IC0xLjY3NiwtMTAuNjk1IFYgMCBoIC0xNS42MDMgdiA0NS4yMTMgaCAxMS43NzIgbCAxLjk1NiwtNS41ODcgaCAwLjkxOCBjIDEuMTk2LDIuMDc1IDIuOTMzLDMuNjU4IDUuMjA3LDQuNzQ5IDIuMjc1LDEuMDkgNC44NjIsMS42MzYgNy43NjIsMS42MzYgNi41MTgsMCAxMS4wOTQsLTEuOTgyIDEzLjcyNywtNS45NDYgaCAxLjIzOCBjIDEuMjc2LDEuODYyIDMuMDUzLDMuMzE4IDUuMzI2LDQuMzcgMi4yNzYsMS4wNSA0Ljc4MiwxLjU3NiA3LjUyNCwxLjU3NiA1LjM0NiwwIDkuMjk3LC0xLjM3IDExLjg1MSwtNC4xMSAyLjU1MywtMi43NDEgMy44MzEsLTYuOTA0IDMuODMxLC0xMi40OTEgViAwIFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyMzFmMjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw1MTMuNDk4NCwxODUuOTcwNjcpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyMikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjMiCiAgICAgICAgIGQ9Ik0gMCwwIEMgMS44ODksMCAzLjUwNSwwLjU5OSA0Ljg0OSwxLjc5NiA2LjE5MSwyLjk5MyA2Ljg2NCw0LjU0OSA2Ljg2NCw2LjQ2NSBWIDkuOTc3IEwgMy4yNzIsOS44MTcgQyAtMS44NjIsOS42MyAtNC40Myw3Ljc0MiAtNC40Myw0LjE1IC00LjQzLDEuMzgzIC0yLjk1MywwIDAsMCBNIDExLjU3MiwtMTAuMjE2IDguNTgsLTQuMjMgSCA4LjI2MSBDIDYuMTU4LC02LjgzNyA0LjAxNywtOC42MiAxLjgzNiwtOS41NzcgYyAtMi4xODIsLTAuOTU4IC01LjAwMiwtMS40MzcgLTguNDYsLTEuNDM3IC00LjI1NywwIC03LjYwOSwxLjI3NyAtMTAuMDU3LDMuODMxIC0yLjQ0NywyLjU1NCAtMy42NzEsNi4xNDUgLTMuNjcxLDEwLjc3NCAwLDQuODE1IDEuNjc2LDguNDAxIDUuMDI5LDEwLjc1NSAzLjM1MSwyLjM1NCA4LjIwNiwzLjY3NyAxNC41NjUsMy45NyBsIDcuNTQyLDAuMjQgdiAwLjYzOCBjIDAsMy43MjUgLTEuODM2LDUuNTg3IC01LjUwNyw1LjU4NyAtMy4yOTgsMCAtNy40ODksLTEuMTE3IC0xMi41NywtMy4zNTIgbCAtNC41MSwxMC4yOTYgYyA1LjI2OCwyLjcxMyAxMS45MTgsNC4wNyAxOS45NTMsNC4wNyA1Ljc5OSwwIDEwLjI4OSwtMS40MzcgMTMuNDY4LC00LjMxIDMuMTc5LC0yLjg3MyA0Ljc2OSwtNi44OSA0Ljc2OSwtMTIuMDUxIHYgLTI5LjY1IHoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyMzFmMjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw1NjcuMDA2MjcsMTcyLjM0OTYpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyNCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjUiCiAgICAgICAgIGQ9Im0gMCwwIGMgMCwtNC42MjkgMS42MDksLTYuOTQ0IDQuODI5LC02Ljk0NCAxLjQ4OSwwIDIuNjQsMC41NzIgMy40NTEsMS43MTYgMC44MTIsMS4xNDQgMS4yMTgsMi44NiAxLjIxOCw1LjE0OCAwLDQuNjgyIC0xLjU1Nyw3LjAyMyAtNC42NjksNy4wMjMgQyAxLjYwOSw2Ljk0MyAwLDQuNjI5IDAsMCBtIC00LjkwOCwtMzYuMDM1IGMgMCwtMS4yNzcgMC42OTEsLTIuMzA4IDIuMDc1LC0zLjA5MyAxLjM4MywtMC43ODQgMy4yMzIsLTEuMTc3IDUuNTQ3LC0xLjE3NyAzLjc3NywwIDYuODA0LDAuNDczIDkuMDc4LDEuNDE3IDIuMjc1LDAuOTQ1IDMuNDEyLDIuMTYxIDMuNDEyLDMuNjUxIDAsMS4xOTcgLTAuNjkyLDIuMDQyIC0yLjA3NSwyLjUzNCAtMS4zODMsMC40OTMgLTMuMzY1LDAuNzM5IC01Ljk0NSwwLjczOSBIIDEuMDc4IGMgLTEuNjc3LDAgLTMuMDkzLC0wLjM5MyAtNC4yNSwtMS4xNzggLTEuMTU3LC0wLjc4NCAtMS43MzYsLTEuNzQ5IC0xLjczNiwtMi44OTMgbSAzNC4wNzksNTAuODQgViA3LjI2MyBMIDIyLjk4Niw0Ljk4OCBjIDAuODUxLC0xLjU0MyAxLjI3NywtMy4zMzkgMS4yNzcsLTUuMzg3IDAsLTQuODY5IC0xLjcxLC04LjY0NyAtNS4xMjgsLTExLjMzMyAtMy40MTksLTIuNjg4IC04LjUyLC00LjAzMSAtMTUuMzA0LC00LjAzMSAtMS42NzYsMCAtMy4wMDcsMC4xMDYgLTMuOTksMC4zMTkgLTAuMzczLC0wLjY5MiAtMC41NTksLTEuMzQzIC0wLjU1OSwtMS45NTUgMCwtMC43NzIgMC42MjUsLTEuMzY0IDEuODc1LC0xLjc3NiAxLjI1MSwtMC40MTIgMi44ODcsLTAuNjE4IDQuOTA5LC0wLjYxOCBoIDcuNTAyIGMgMTAuMTM2LDAgMTUuMjA0LC00LjI3IDE1LjIwNCwtMTIuODEgMCwtNS41MDcgLTIuMzQ4LC05Ljc5IC03LjA0MywtMTIuODQ5IC00LjY5NiwtMy4wNiAtMTEuMjg4LC00LjU5IC0xOS43NzMsLTQuNTkgLTYuNDEyLDAgLTExLjM1MywxLjA3MSAtMTQuODI1LDMuMjEzIC0zLjQ3MiwyLjE0MSAtNS4yMDgsNS4yMjEgLTUuMjA4LDkuMjM4IDAsNS40MDEgMy4zNTIsOC44ODUgMTAuMDU2LDEwLjQ1NSAtMS4zODMsMC41ODUgLTIuNTg3LDEuNTMgLTMuNjExLDIuODMzIC0xLjAyNCwxLjMwMyAtMS41MzcsMi41OTQgLTEuNTM3LDMuODcxIDAsMS40MSAwLjM4NiwyLjY1NCAxLjE1NywzLjczMSAwLjc3MiwxLjA3OCAyLjM4MSwyLjM2MSA0LjgyOSwzLjg1MSAtMi4zNDEsMS4wMzggLTQuMTgzLDIuNjYgLTUuNTI3LDQuODY5IC0xLjM0NCwyLjIwOCAtMi4wMTUsNC44OTUgLTIuMDE1LDguMDYxIDAsNC45MjEgMS42NzYsOC43MzkgNS4wMjksMTEuNDUyIDMuMzUxLDIuNzE0IDguMTQsNC4wNzEgMTQuMzY1LDQuMDcxIDAuODI0LDAgMi4yNDgsLTAuMDk0IDQuMjcsLTAuMjggMi4wMjIsLTAuMTg2IDMuNTEyLC0wLjM1OSA0LjQ2OSwtMC41MTggeiIKICAgICAgICAgc3R5bGU9ImZpbGw6IzIzMWYyMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDYyMS4xNDY5MywxNDUuNDI2NCkiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDI2KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgyNyIKICAgICAgICAgZD0iTSAwLDAgQyAtMS44MzYsMCAtMy4zNzIsLTAuNTc5IC00LjYwOSwtMS43MzYgLTUuODQ3LC0yLjg5MyAtNi41NzEsLTQuNzA4IC02Ljc4NCwtNy4xODMgSCA2LjYyNCBDIDYuNTcsLTUuMDAyIDUuOTUyLC0zLjI1OSA0Ljc2OSwtMS45NTUgMy41ODUsLTAuNjUyIDEuOTk1LDAgMCwwIG0gMC45MTgsLTM2LjE5NCBjIC03LjUyOSwwIC0xMy4zNzUsMi4wMDIgLTE3LjUzOSw2LjAwNiAtNC4xNjMsNC4wMDMgLTYuMjQ1LDkuNzAzIC02LjI0NSwxNy4wOTkgMCw3LjYzNSAxLjkyOSwxMy40OTQgNS43ODYsMTcuNTc5IDMuODU3LDQuMDgzIDkuMzY0LDYuMTI1IDE2LjUyMSw2LjEyNSA2LjgxLDAgMTIuMDcyLC0xLjc3NiAxNS43ODMsLTUuMzI3IDMuNzExLC0zLjU1MiA1LjU2NywtOC42NjcgNS41NjcsLTE1LjM0NCB2IC02Ljk0MyBIIC03LjEwNCBjIDAuMTA3LC0yLjUyOCAxLjAzMiwtNC41MSAyLjc3NCwtNS45NDYgMS43NDIsLTEuNDM3IDQuMTE3LC0yLjE1NiA3LjEyMywtMi4xNTYgMi43NCwwIDUuMjYxLDAuMjYgNy41NjIsMC43NzkgMi4zMDEsMC41MTkgNC43OTUsMS40MDMgNy40ODMsMi42NTQgdiAtMTEuMjE0IGMgLTIuNDQ4LC0xLjI1MSAtNC45NzYsLTIuMTE1IC03LjU4MiwtMi41OTQgLTIuNjA4LC0wLjQ3OSAtNS43MjEsLTAuNzE4IC05LjMzOCwtMC43MTgiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyMzFmMjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw2OTEuMTg5ODcsMTM4Ljc3NikiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDI4KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgyOSIKICAgICAgICAgZD0ibSAwLDAgYyAyLjUsMCA0LjI2MywwLjc4NCA1LjI4NywyLjM1NCAxLjAyNCwxLjU3IDEuNTc2LDMuOTkxIDEuNjU2LDcuMjYzIHYgMS4yMzcgYyAwLDMuOTkxIC0wLjU3Miw2LjgzMSAtMS43MTUsOC41MiAtMS4xNDUsMS42ODkgLTIuOTQxLDIuNTM0IC01LjM4OCwyLjUzNCAtMi4wNDksMCAtMy42MzksLTAuOTY1IC00Ljc2OSwtMi44OTMgLTEuMTMxLC0xLjkyOSAtMS42OTYsLTQuNjc2IC0xLjY5NiwtOC4yNDEgMCwtMy41MTEgMC41NzIsLTYuMTg1IDEuNzE2LC04LjAyMSBDIC0zLjc2NiwwLjkxOCAtMi4xMjksMCAwLDAgbSAtNi4zODYsLTEyLjMzMSBjIC0zLjIxOCwwIC02LjAzMiwwLjkxOCAtOC40MzksMi43NTQgLTIuNDA4LDEuODM1IC00LjI3MSw0LjUzNSAtNS41ODcsOC4xIC0xLjMxNywzLjU2NSAtMS45NzYsNy43MjggLTEuOTc2LDEyLjQ5MSAwLDcuMzQyIDEuNDc3LDEzLjA4OSA0LjQzLDE3LjIzOSAyLjk1Myw0LjE1IDcuMDEsNi4yMjYgMTIuMTcxLDYuMjI2IDIuNTI3LDAgNC43NDIsLTAuNTA2IDYuNjQ0LC0xLjUxNyAxLjkwMiwtMS4wMTEgMy42MzgsLTIuNzEzIDUuMjA4LC01LjEwOCBoIDAuMzIgQyA1Ljg3OSwzMS4zOTIgNS42MjYsMzQuOTMgNS42MjYsMzguNDY5IFYgNTAuNTYgSCAyMS4zNDkgViAtMTEuNTMzIEggOS41NzcgTCA2LjIyNSwtNS44MjYgSCA1LjYyNiBjIC0yLjY4OCwtNC4zMzcgLTYuNjksLTYuNTA1IC0xMi4wMTIsLTYuNTA1IgogICAgICAgICBzdHlsZT0iZmlsbDojMjMxZjIwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsNzUxLjM3MzQ3LDE3MC41OTM3MykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDMwKSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgzMSIKICAgICAgICAgZD0ibSAwLDAgYyAwLC0zLjg4NCAwLjUxOSwtNi44NDQgMS41NTcsLTguODc5IDEuMDM3LC0yLjAzNSAyLjc3OSwtMy4wNTMgNS4yMjcsLTMuMDUzIDIuNDIsMCA0LjEzLDEuMDE4IDUuMTI4LDMuMDUzIDAuOTk3LDIuMDM1IDEuNDk2LDQuOTk1IDEuNDk2LDguODc5IDAsMy44NTcgLTAuNTA2LDYuNzcxIC0xLjUxNiw4LjczOSAtMS4wMTEsMS45NjkgLTIuNzQxLDIuOTUzIC01LjE4OCwyLjk1MyAtMi4zOTQsMCAtNC4xMSwtMC45NzcgLTUuMTQ3LC0yLjkzMyBDIDAuNTE5LDYuODA0IDAsMy44ODQgMCwwIG0gMjkuMjkxLDAgYyAwLC03LjM5NiAtMS45ODksLTEzLjE2MyAtNS45NjYsLTE3LjI5OSAtMy45NzcsLTQuMTM3IC05LjU0NSwtNi4yMDUgLTE2LjcwMSwtNi4yMDUgLTYuODYzLDAgLTEyLjMyNCwyLjExNSAtMTYuMzgxLDYuMzQ1IC00LjA1Nyw0LjIzIC02LjA4Niw5Ljk1IC02LjA4NiwxNy4xNTkgMCw3LjM2OSAxLjk4OSwxMy4wOTUgNS45NjYsMTcuMTggMy45NzgsNC4wODMgOS41NTgsNi4xMjUgMTYuNzQsNi4xMjUgNC40NDQsMCA4LjM2NywtMC45NDUgMTEuNzczLC0yLjgzMyAzLjQwNSwtMS44ODkgNi4wMzIsLTQuNTk3IDcuODgyLC04LjEyMSBDIDI4LjM2Niw4LjgyNiAyOS4yOTEsNC43MDkgMjkuMjkxLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyMzFmMjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw4MDUuNDIwMjcsMTU1LjY5NTg3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMzIpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDMzIgogICAgICAgICBkPSJtIDAsMCB2IDI0LjY2MiBjIDAsMy4wMDUgLTAuNDMzLDUuMjc0IC0xLjI5Nyw2LjgwMyAtMC44NjUsMS41MyAtMi4yNTUsMi4yOTUgLTQuMTcxLDIuMjk1IC0yLjYzMywwIC00LjUzNiwtMS4wNTEgLTUuNzA2LC0zLjE1MyAtMS4xNzEsLTIuMTAyIC0xLjc1NiwtNS43MDYgLTEuNzU2LC0xMC44MTQgViAwIGggLTE1LjYwMiB2IDQ1LjIxMyBoIDExLjc3MSBsIDEuOTU1LC01LjU4NyBoIDAuOTE4IGMgMS4zMywyLjEyOCAzLjE3MywzLjcyNSA1LjUyOCw0Ljc4OSAyLjM1NCwxLjA2NCA1LjA2MSwxLjU5NiA4LjEyMSwxLjU5NiA1LjAwMSwwIDguODkxLC0xLjQ1IDExLjY3MiwtNC4zNSAyLjc3OSwtMi45IDQuMTcsLTYuOTgzIDQuMTcsLTEyLjI1MSBWIDAgWiIKICAgICAgICAgc3R5bGU9ImZpbGw6IzIzMWYyMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDg4Ny4xOTI0LDE4NS45NzA2NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDM0KSIgLz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPgo=" alt="Armagedon">
+                <img class="logo-dark" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgoKPHN2ZwogICB3aWR0aD0iMjQyIgogICBoZWlnaHQ9Ijg0IgogICB2aWV3Qm94PSIzMCA2MCAyNDIgODQiCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9InN2ZzEiCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGRlZnMKICAgICBpZD0iZGVmczEiPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDIiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTEzLjc0MTUsLTE5LjQyOTA5OCkiCiAgICAgICAgIGlkPSJwYXRoMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoNCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMTMuNzQxNSwtMzIuOTk1NTAzKSIKICAgICAgICAgaWQ9InBhdGg0IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGg2Ij4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE0OC42MTAyLC0xMDIuNzA3OSkiCiAgICAgICAgIGlkPSJwYXRoNiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC05NC4wNDcyMDUsLTExMC43OTI5KSIKICAgICAgICAgaWQ9InBhdGg4IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxMCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC05My4wNDU3LC0xMjMuODk1NCkiCiAgICAgICAgIGlkPSJwYXRoMTAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDEyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTg3LjcyNCwtMTAyLjM4NjcxKSIKICAgICAgICAgaWQ9InBhdGgxMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMTQiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTExLjY4MiwtMTgyLjA2MzkpIgogICAgICAgICBpZD0icGF0aDE0IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxNiI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMTUuODAxMTEsLTE4NC44MjkpIgogICAgICAgICBpZD0icGF0aDE2IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNjguNzg4NCwtMTE4Ljg4MTMxKSIKICAgICAgICAgaWQ9InBhdGgxOCIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMjAiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzIyLjE1ODUxLC0xNDEuMDI5MikiCiAgICAgICAgIGlkPSJwYXRoMjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDIyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTM4NS4xMjM4MSwtOTUuMDE4KSIKICAgICAgICAgaWQ9InBhdGgyMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMjQiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNDI1LjI1NDcxLC0xMDUuMjMzOCkiCiAgICAgICAgIGlkPSJwYXRoMjQiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDI2Ij4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQ2NS44NjAyMSwtMTI1LjQyNjIpIgogICAgICAgICBpZD0icGF0aDI2IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgyOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01MTguMzkyNDIsLTEzMC40MTQpIgogICAgICAgICBpZD0icGF0aDI4IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgzMCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01NjMuNTMwMTIsLTEwNi41NTA3MSkiCiAgICAgICAgIGlkPSJwYXRoMzAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTYwNC4wNjUyMiwtMTE3LjcyNDEpIgogICAgICAgICBpZD0icGF0aDMyIiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgzNCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02NjUuMzk0MzIsLTk1LjAxOCkiCiAgICAgICAgIGlkPSJwYXRoMzQiIC8+CiAgICA8L2NsaXBQYXRoPgogIDwvZGVmcz4KICA8ZwogICAgIGlkPSJsYXllcjEiCiAgICAgc3R5bGU9ImRpc3BsYXk6aW5saW5lIj4KICAgIDxnCiAgICAgICBpZD0iZzYyIgogICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMC4yNjQ1ODMzMywwLDAsMC4yNjQ1ODMzMywyNS4yMTIxMDcsNjEuMjkyNTU5KSI+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMSIKICAgICAgICAgZD0iTSAwLDAgQyAtMi4yMTcsMCAtNC40MzUsMC41NzMgLTYuNDIxLDEuNzIxIEwgLTgwLjE1NCw0NC4yOSBjIC0zLjk3NCwyLjI5NSAtNi40MjIsNi41MzUgLTYuNDIyLDExLjEyMyB2IDg1LjEzOSBjIDAsNC41ODkgMi40NDgsOC44MjggNi40MjIsMTEuMTIzIGwgNzMuNzMzLDQyLjU2OSBjIDEuOTg2LDEuMTQ3IDQuMjA0LDEuNzIxIDYuNDIxLDEuNzIxIDIuMjE4LDAgNC40MzUsLTAuNTc0IDYuNDIyLC0xLjcyMSBsIDczLjczMiwtNDIuNTY5IGMgMy45NzMsLTIuMjk1IDYuNDIyLC02LjUzNCA2LjQyMiwtMTEuMTIzIFYgNTUuNDEzIGMgMCwtNC41ODggLTIuNDQ5LC04LjgyOCAtNi40MjIsLTExLjEyMyBMIDYuNDIyLDEuNzIxIEMgNC40MzUsMC41NzMgMi4yMTgsMCAwLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZGRkMTA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxNTEuNjU1MzMsMjg2Ljc1NTg3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMyIKICAgICAgICAgZD0ibSAwLDAgYyAtMC44MDYsMCAtMS42MTIsMC4yMDkgLTIuMzM1LDAuNjI2IGwgLTY5LjA2MiwzOS44NzMgYyAtMS40NDUsMC44MzQgLTIuMzM1LDIuMzc2IC0yLjMzNSw0LjA0NCB2IDc5Ljc0NiBjIDAsMS42NjkgMC44OSwzLjIxIDIuMzM1LDQuMDQ0IGwgNjkuMDYyLDM5Ljg3MyBjIDAuNzIzLDAuNDE4IDEuNTI5LDAuNjI2IDIuMzM1LDAuNjI2IDAuODA3LDAgMS42MTMsLTAuMjA4IDIuMzM1LC0wLjYyNiBsIDY5LjA2MSwtMzkuODczIGMgMS40NDYsLTAuODM0IDIuMzM2LC0yLjM3NSAyLjMzNiwtNC4wNDQgViA0NC41NDMgYyAwLC0xLjY2OCAtMC44OSwtMy4yMSAtMi4zMzYsLTQuMDQ0IEwgMi4zMzUsMC42MjYgQyAxLjYxMywwLjIwOSAwLjgwNywwIDAsMCIKICAgICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDE1MS42NTUzMywyNjguNjY3MzMpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGg0KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGg1IgogICAgICAgICBkPSJtIDAsMCAtMjguMjI0LC01NC40MDkgNTYuNDQ4LDMyLjgyMyB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZmJjNzEyO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTk4LjE0NjkzLDE3NS43MTc0NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDYpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDciCiAgICAgICAgIGQ9Ik0gMCwwIFYgMCBMIDEuNTg1LDYuNDA3IFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNlMGUwZTA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxMjUuMzk2MjcsMTY0LjkzNzQ3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoOCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoOSIKICAgICAgICAgZD0ibSAwLDAgLTUuOTUsMTQuNjIgLTEzLjQ2NSwtMzkuNTA4IDE1LjQ2Niw4LjkyOCB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZmJjNzA3O2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTI0LjA2MDkzLDE0Ny40Njc0NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDEwKSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxMSIKICAgICAgICAgZD0iTSAwLDAgLTM3LjE4MSwtMjEuNDYyIC05LjI5NCwtMzcuNTYzIFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmOWE3MGQ7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxMTYuOTY1MzMsMTc2LjE0NTczKSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMTIpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDEzIgogICAgICAgICBkPSJNIDAsMCAtMjkuNTQsLTExOS4zODQgMCwtMTM2LjQzOCBaIgogICAgICAgICBzdHlsZT0iZmlsbDojZWI4MTExO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTQ4LjkwOTMzLDY5LjkwOTQ2NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDE0KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxNSIKICAgICAgICAgZD0iTSAwLDAgViAtMTM2LjQyMiBMIDI5LjQ4NywtNzkuNTggWiIKICAgICAgICAgc3R5bGU9ImZpbGw6I2ZlZTgxYjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDE1NC40MDE0Nyw2Ni4yMjI2NjcpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgxNikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMTciCiAgICAgICAgIGQ9Im0gMCwwIC0yLjUxNCw5LjU3OCBjIC0wLjU4NiwyLjEyOCAtMS4yOTcsNC44ODEgLTIuMTM1LDguMjYgLTAuODM4LDMuMzc4IC0xLjM5MSw1Ljc5OSAtMS42NTYsNy4yNjMgLTAuMjQsLTEuMzU3IC0wLjcxMywtMy41OTIgLTEuNDE3LC02LjcwNSBDIC04LjQyNywxNS4yODQgLTkuOTksOS4xNTIgLTEyLjQxMSwwIFogbSA2LjE0NSwtMjMuODYzIC0yLjg3MywxMC45MzQgaCAtMTguOTU1IGwgLTIuOTUzLC0xMC45MzQgSCAtMzUuOTU1IEwgLTE2LjkyLDM0LjcxOCBIIDQuMTEgbCAxOS4yNzQsLTU4LjU4MSB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZmZmZmZmO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMzU4LjM4NDUzLDE1NC4xNTI5MykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDE4KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxOSIKICAgICAgICAgZD0ibSAwLDAgYyAxLjM1NywwIDIuNjQ3LC0wLjEwNyAzLjg3MSwtMC4zMTkgbCAwLjg3OCwtMC4xNiAtMS4zOTcsLTE0LjcyNSBjIC0xLjI3NywwLjMxOSAtMy4wNDYsMC40NzkgLTUuMzA4LDAuNDc5IC0zLjQwNSwwIC01Ljg3OSwtMC43NzggLTcuNDIyLC0yLjMzNSAtMS41NDMsLTEuNTU2IC0yLjMxNCwtMy43OTggLTIuMzE0LC02LjcyNCB2IC0yMi4yMjcgaCAtMTUuNjAzIHYgNDUuMjEzIGggMTEuNjEyIGwgMi40MzQsLTcuMjIzIGggMC43NTkgYyAxLjMwMiwyLjM5NCAzLjExOCw0LjMzIDUuNDQ3LDUuODA2IEMgLTQuNzE2LC0wLjczOCAtMi4zNjgsMCAwLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw0MjkuNTQ0NjcsMTI0LjYyMjQpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyMCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjEiCiAgICAgICAgIGQ9Im0gMCwwIHYgMjQuNTgyIGMgMCwzLjA1OSAtMC40MTgsNS4zNTQgLTEuMjU2LDYuODgzIC0wLjgzOCwxLjUzIC0yLjE2MiwyLjI5NSAtMy45NzEsMi4yOTUgLTIuMzk0LDAgLTQuMTUsLTEuMDI1IC01LjI2NywtMy4wNzMgLTEuMTE3LC0yLjA0OSAtMS42NzYsLTUuMjU0IC0xLjY3NiwtOS42MTcgViAwIGggLTE1LjY0MyB2IDI0LjU4MiBjIDAsMy4wNTkgLTAuMzk5LDUuMzU0IC0xLjE5OCw2Ljg4MyAtMC43OTgsMS41MyAtMi4wODgsMi4yOTUgLTMuODcsMi4yOTUgLTIuNDQ4LDAgLTQuMjMsLTEuMDkxIC01LjM0OCwtMy4yNzIgLTEuMTE3LC0yLjE4MiAtMS42NzYsLTUuNzQ3IC0xLjY3NiwtMTAuNjk1IFYgMCBoIC0xNS42MDMgdiA0NS4yMTMgaCAxMS43NzIgbCAxLjk1NiwtNS41ODcgaCAwLjkxOCBjIDEuMTk2LDIuMDc1IDIuOTMzLDMuNjU4IDUuMjA3LDQuNzQ5IDIuMjc1LDEuMDkgNC44NjIsMS42MzYgNy43NjIsMS42MzYgNi41MTgsMCAxMS4wOTQsLTEuOTgyIDEzLjcyNywtNS45NDYgaCAxLjIzOCBjIDEuMjc2LDEuODYyIDMuMDUzLDMuMzE4IDUuMzI2LDQuMzcgMi4yNzYsMS4wNSA0Ljc4MiwxLjU3NiA3LjUyNCwxLjU3NiA1LjM0NiwwIDkuMjk3LC0xLjM3IDExLjg1MSwtNC4xMSAyLjU1MywtMi43NDEgMy44MzEsLTYuOTA0IDMuODMxLC0xMi40OTEgViAwIFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw1MTMuNDk4NCwxODUuOTcwNjcpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyMikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjMiCiAgICAgICAgIGQ9Ik0gMCwwIEMgMS44ODksMCAzLjUwNSwwLjU5OSA0Ljg0OSwxLjc5NiA2LjE5MSwyLjk5MyA2Ljg2NCw0LjU0OSA2Ljg2NCw2LjQ2NSBWIDkuOTc3IEwgMy4yNzIsOS44MTcgQyAtMS44NjIsOS42MyAtNC40Myw3Ljc0MiAtNC40Myw0LjE1IC00LjQzLDEuMzgzIC0yLjk1MywwIDAsMCBNIDExLjU3MiwtMTAuMjE2IDguNTgsLTQuMjMgSCA4LjI2MSBDIDYuMTU4LC02LjgzNyA0LjAxNywtOC42MiAxLjgzNiwtOS41NzcgYyAtMi4xODIsLTAuOTU4IC01LjAwMiwtMS40MzcgLTguNDYsLTEuNDM3IC00LjI1NywwIC03LjYwOSwxLjI3NyAtMTAuMDU3LDMuODMxIC0yLjQ0NywyLjU1NCAtMy42NzEsNi4xNDUgLTMuNjcxLDEwLjc3NCAwLDQuODE1IDEuNjc2LDguNDAxIDUuMDI5LDEwLjc1NSAzLjM1MSwyLjM1NCA4LjIwNiwzLjY3NyAxNC41NjUsMy45NyBsIDcuNTQyLDAuMjQgdiAwLjYzOCBjIDAsMy43MjUgLTEuODM2LDUuNTg3IC01LjUwNyw1LjU4NyAtMy4yOTgsMCAtNy40ODksLTEuMTE3IC0xMi41NywtMy4zNTIgbCAtNC41MSwxMC4yOTYgYyA1LjI2OCwyLjcxMyAxMS45MTgsNC4wNyAxOS45NTMsNC4wNyA1Ljc5OSwwIDEwLjI4OSwtMS40MzcgMTMuNDY4LC00LjMxIDMuMTc5LC0yLjg3MyA0Ljc2OSwtNi44OSA0Ljc2OSwtMTIuMDUxIHYgLTI5LjY1IHoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw1NjcuMDA2MjcsMTcyLjM0OTYpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyNCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjUiCiAgICAgICAgIGQ9Im0gMCwwIGMgMCwtNC42MjkgMS42MDksLTYuOTQ0IDQuODI5LC02Ljk0NCAxLjQ4OSwwIDIuNjQsMC41NzIgMy40NTEsMS43MTYgMC44MTIsMS4xNDQgMS4yMTgsMi44NiAxLjIxOCw1LjE0OCAwLDQuNjgyIC0xLjU1Nyw3LjAyMyAtNC42NjksNy4wMjMgQyAxLjYwOSw2Ljk0MyAwLDQuNjI5IDAsMCBtIC00LjkwOCwtMzYuMDM1IGMgMCwtMS4yNzcgMC42OTEsLTIuMzA4IDIuMDc1LC0zLjA5MyAxLjM4MywtMC43ODQgMy4yMzIsLTEuMTc3IDUuNTQ3LC0xLjE3NyAzLjc3NywwIDYuODA0LDAuNDczIDkuMDc4LDEuNDE3IDIuMjc1LDAuOTQ1IDMuNDEyLDIuMTYxIDMuNDEyLDMuNjUxIDAsMS4xOTcgLTAuNjkyLDIuMDQyIC0yLjA3NSwyLjUzNCAtMS4zODMsMC40OTMgLTMuMzY1LDAuNzM5IC01Ljk0NSwwLjczOSBIIDEuMDc4IGMgLTEuNjc3LDAgLTMuMDkzLC0wLjM5MyAtNC4yNSwtMS4xNzggLTEuMTU3LC0wLjc4NCAtMS43MzYsLTEuNzQ5IC0xLjczNiwtMi44OTMgbSAzNC4wNzksNTAuODQgViA3LjI2MyBMIDIyLjk4Niw0Ljk4OCBjIDAuODUxLC0xLjU0MyAxLjI3NywtMy4zMzkgMS4yNzcsLTUuMzg3IDAsLTQuODY5IC0xLjcxLC04LjY0NyAtNS4xMjgsLTExLjMzMyAtMy40MTksLTIuNjg4IC04LjUyLC00LjAzMSAtMTUuMzA0LC00LjAzMSAtMS42NzYsMCAtMy4wMDcsMC4xMDYgLTMuOTksMC4zMTkgLTAuMzczLC0wLjY5MiAtMC41NTksLTEuMzQzIC0wLjU1OSwtMS45NTUgMCwtMC43NzIgMC42MjUsLTEuMzY0IDEuODc1LC0xLjc3NiAxLjI1MSwtMC40MTIgMi44ODcsLTAuNjE4IDQuOTA5LC0wLjYxOCBoIDcuNTAyIGMgMTAuMTM2LDAgMTUuMjA0LC00LjI3IDE1LjIwNCwtMTIuODEgMCwtNS41MDcgLTIuMzQ4LC05Ljc5IC03LjA0MywtMTIuODQ5IC00LjY5NiwtMy4wNiAtMTEuMjg4LC00LjU5IC0xOS43NzMsLTQuNTkgLTYuNDEyLDAgLTExLjM1MywxLjA3MSAtMTQuODI1LDMuMjEzIC0zLjQ3MiwyLjE0MSAtNS4yMDgsNS4yMjEgLTUuMjA4LDkuMjM4IDAsNS40MDEgMy4zNTIsOC44ODUgMTAuMDU2LDEwLjQ1NSAtMS4zODMsMC41ODUgLTIuNTg3LDEuNTMgLTMuNjExLDIuODMzIC0xLjAyNCwxLjMwMyAtMS41MzcsMi41OTQgLTEuNTM3LDMuODcxIDAsMS40MSAwLjM4NiwyLjY1NCAxLjE1NywzLjczMSAwLjc3MiwxLjA3OCAyLjM4MSwyLjM2MSA0LjgyOSwzLjg1MSAtMi4zNDEsMS4wMzggLTQuMTgzLDIuNjYgLTUuNTI3LDQuODY5IC0xLjM0NCwyLjIwOCAtMi4wMTUsNC44OTUgLTIuMDE1LDguMDYxIDAsNC45MjEgMS42NzYsOC43MzkgNS4wMjksMTEuNDUyIDMuMzUxLDIuNzE0IDguMTQsNC4wNzEgMTQuMzY1LDQuMDcxIDAuODI0LDAgMi4yNDgsLTAuMDk0IDQuMjcsLTAuMjggMi4wMjIsLTAuMTg2IDMuNTEyLC0wLjM1OSA0LjQ2OSwtMC41MTggeiIKICAgICAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDYyMS4xNDY5MywxNDUuNDI2NCkiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDI2KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgyNyIKICAgICAgICAgZD0iTSAwLDAgQyAtMS44MzYsMCAtMy4zNzIsLTAuNTc5IC00LjYwOSwtMS43MzYgLTUuODQ3LC0yLjg5MyAtNi41NzEsLTQuNzA4IC02Ljc4NCwtNy4xODMgSCA2LjYyNCBDIDYuNTcsLTUuMDAyIDUuOTUyLC0zLjI1OSA0Ljc2OSwtMS45NTUgMy41ODUsLTAuNjUyIDEuOTk1LDAgMCwwIG0gMC45MTgsLTM2LjE5NCBjIC03LjUyOSwwIC0xMy4zNzUsMi4wMDIgLTE3LjUzOSw2LjAwNiAtNC4xNjMsNC4wMDMgLTYuMjQ1LDkuNzAzIC02LjI0NSwxNy4wOTkgMCw3LjYzNSAxLjkyOSwxMy40OTQgNS43ODYsMTcuNTc5IDMuODU3LDQuMDgzIDkuMzY0LDYuMTI1IDE2LjUyMSw2LjEyNSA2LjgxLDAgMTIuMDcyLC0xLjc3NiAxNS43ODMsLTUuMzI3IDMuNzExLC0zLjU1MiA1LjU2NywtOC42NjcgNS41NjcsLTE1LjM0NCB2IC02Ljk0MyBIIC03LjEwNCBjIDAuMTA3LC0yLjUyOCAxLjAzMiwtNC41MSAyLjc3NCwtNS45NDYgMS43NDIsLTEuNDM3IDQuMTE3LC0yLjE1NiA3LjEyMywtMi4xNTYgMi43NCwwIDUuMjYxLDAuMjYgNy41NjIsMC43NzkgMi4zMDEsMC41MTkgNC43OTUsMS40MDMgNy40ODMsMi42NTQgdiAtMTEuMjE0IGMgLTIuNDQ4LC0xLjI1MSAtNC45NzYsLTIuMTE1IC03LjU4MiwtMi41OTQgLTIuNjA4LC0wLjQ3OSAtNS43MjEsLTAuNzE4IC05LjMzOCwtMC43MTgiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw2OTEuMTg5ODcsMTM4Ljc3NikiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDI4KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgyOSIKICAgICAgICAgZD0ibSAwLDAgYyAyLjUsMCA0LjI2MywwLjc4NCA1LjI4NywyLjM1NCAxLjAyNCwxLjU3IDEuNTc2LDMuOTkxIDEuNjU2LDcuMjYzIHYgMS4yMzcgYyAwLDMuOTkxIC0wLjU3Miw2LjgzMSAtMS43MTUsOC41MiAtMS4xNDUsMS42ODkgLTIuOTQxLDIuNTM0IC01LjM4OCwyLjUzNCAtMi4wNDksMCAtMy42MzksLTAuOTY1IC00Ljc2OSwtMi44OTMgLTEuMTMxLC0xLjkyOSAtMS42OTYsLTQuNjc2IC0xLjY5NiwtOC4yNDEgMCwtMy41MTEgMC41NzIsLTYuMTg1IDEuNzE2LC04LjAyMSBDIC0zLjc2NiwwLjkxOCAtMi4xMjksMCAwLDAgbSAtNi4zODYsLTEyLjMzMSBjIC0zLjIxOCwwIC02LjAzMiwwLjkxOCAtOC40MzksMi43NTQgLTIuNDA4LDEuODM1IC00LjI3MSw0LjUzNSAtNS41ODcsOC4xIC0xLjMxNywzLjU2NSAtMS45NzYsNy43MjggLTEuOTc2LDEyLjQ5MSAwLDcuMzQyIDEuNDc3LDEzLjA4OSA0LjQzLDE3LjIzOSAyLjk1Myw0LjE1IDcuMDEsNi4yMjYgMTIuMTcxLDYuMjI2IDIuNTI3LDAgNC43NDIsLTAuNTA2IDYuNjQ0LC0xLjUxNyAxLjkwMiwtMS4wMTEgMy42MzgsLTIuNzEzIDUuMjA4LC01LjEwOCBoIDAuMzIgQyA1Ljg3OSwzMS4zOTIgNS42MjYsMzQuOTMgNS42MjYsMzguNDY5IFYgNTAuNTYgSCAyMS4zNDkgViAtMTEuNTMzIEggOS41NzcgTCA2LjIyNSwtNS44MjYgSCA1LjYyNiBjIC0yLjY4OCwtNC4zMzcgLTYuNjksLTYuNTA1IC0xMi4wMTIsLTYuNTA1IgogICAgICAgICBzdHlsZT0iZmlsbDojZmZmZmZmO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsNzUxLjM3MzQ3LDE3MC41OTM3MykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDMwKSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgzMSIKICAgICAgICAgZD0ibSAwLDAgYyAwLC0zLjg4NCAwLjUxOSwtNi44NDQgMS41NTcsLTguODc5IDEuMDM3LC0yLjAzNSAyLjc3OSwtMy4wNTMgNS4yMjcsLTMuMDUzIDIuNDIsMCA0LjEzLDEuMDE4IDUuMTI4LDMuMDUzIDAuOTk3LDIuMDM1IDEuNDk2LDQuOTk1IDEuNDk2LDguODc5IDAsMy44NTcgLTAuNTA2LDYuNzcxIC0xLjUxNiw4LjczOSAtMS4wMTEsMS45NjkgLTIuNzQxLDIuOTUzIC01LjE4OCwyLjk1MyAtMi4zOTQsMCAtNC4xMSwtMC45NzcgLTUuMTQ3LC0yLjkzMyBDIDAuNTE5LDYuODA0IDAsMy44ODQgMCwwIG0gMjkuMjkxLDAgYyAwLC03LjM5NiAtMS45ODksLTEzLjE2MyAtNS45NjYsLTE3LjI5OSAtMy45NzcsLTQuMTM3IC05LjU0NSwtNi4yMDUgLTE2LjcwMSwtNi4yMDUgLTYuODYzLDAgLTEyLjMyNCwyLjExNSAtMTYuMzgxLDYuMzQ1IC00LjA1Nyw0LjIzIC02LjA4Niw5Ljk1IC02LjA4NiwxNy4xNTkgMCw3LjM2OSAxLjk4OSwxMy4wOTUgNS45NjYsMTcuMTggMy45NzgsNC4wODMgOS41NTgsNi4xMjUgMTYuNzQsNi4xMjUgNC40NDQsMCA4LjM2NywtMC45NDUgMTEuNzczLC0yLjgzMyAzLjQwNSwtMS44ODkgNi4wMzIsLTQuNTk3IDcuODgyLC04LjEyMSBDIDI4LjM2Niw4LjgyNiAyOS4yOTEsNC43MDkgMjkuMjkxLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw4MDUuNDIwMjcsMTU1LjY5NTg3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMzIpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDMzIgogICAgICAgICBkPSJtIDAsMCB2IDI0LjY2MiBjIDAsMy4wMDUgLTAuNDMzLDUuMjc0IC0xLjI5Nyw2LjgwMyAtMC44NjUsMS41MyAtMi4yNTUsMi4yOTUgLTQuMTcxLDIuMjk1IC0yLjYzMywwIC00LjUzNiwtMS4wNTEgLTUuNzA2LC0zLjE1MyAtMS4xNzEsLTIuMTAyIC0xLjc1NiwtNS43MDYgLTEuNzU2LC0xMC44MTQgViAwIGggLTE1LjYwMiB2IDQ1LjIxMyBoIDExLjc3MSBsIDEuOTU1LC01LjU4NyBoIDAuOTE4IGMgMS4zMywyLjEyOCAzLjE3MywzLjcyNSA1LjUyOCw0Ljc4OSAyLjM1NCwxLjA2NCA1LjA2MSwxLjU5NiA4LjEyMSwxLjU5NiA1LjAwMSwwIDguODkxLC0xLjQ1IDExLjY3MiwtNC4zNSAyLjc3OSwtMi45IDQuMTcsLTYuOTgzIDQuMTcsLTEyLjI1MSBWIDAgWiIKICAgICAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDg4Ny4xOTI0LDE4NS45NzA2NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDM0KSIgLz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPgo=" alt="Armagedon">
+            </a>
+            <nav class="nav">
+                <a href="#">Om oss <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+</svg></a>
+                <a href="#">Aktiviteter <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+</svg></a>
+                <a href="#">Kontakt</a>
+            </nav>
+            <div class="top-actions">
+                <a href="#" class="login only-guest">Logga in</a>
+                <a href="#" class="btn btn-primary btn-sm only-guest">Bli medlem</a>
+                <span class="avatar only-member" title="Maja Medlem">MM</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Block: Hero -->
+    <section class="block hero">
+        <span class="block-label">Hero · titel och underrubrik från CMS-sidan ”hem”</span>
+        <div class="wrap">
+            <div class="hero-grid">
+            <div class="hero-inner">
+                <h1>Välkommen till <em>Armagedon<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="swoosh" x1="0" x2="1"><stop offset="0" stop-color="#fbc712"/><stop offset="1" stop-color="#eb8111"/></linearGradient></defs><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></em></h1>
+                <p class="ingress">Borås spelförening för brädspel, figurspel, kortspel och rollspel</p>
+                <div class="actions only-guest">
+                    <a href="#" class="btn btn-primary">Bli medlem <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></a>
+                    <a href="#" class="btn btn-secondary">Logga in</a>
+                    <a href="http://discord.armagedon.se" class="btn btn-discord"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+</svg> Discord</a>
+                </div>
+                <div class="actions only-member">
+                    <a href="#" class="btn btn-primary"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+</svg> Min sida</a>
+                    <a href="#" class="btn btn-secondary"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+</svg> Boka lokal</a>
+                    <a href="http://discord.armagedon.se" class="btn btn-discord"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+</svg> Discord</a>
+                </div>
+            </div>
+            <aside class="week" aria-label="Veckans spelkvällar">
+                <div class="now">
+                    <span class="now-dot" aria-hidden="true"></span>
+                    <span class="now-txt"><b>Just nu i lokalen:</b> Brädspel, till 22:00</span>
+                    <span class="example-flag">Exempel</span>
+                </div>
+                <div class="week-head">
+                    <span><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+</svg> Veckans spelkvällar</span>
+                </div>
+                <ul>
+                    <li class="is-next">
+                        <span class="day">Tis</span>
+                        <span class="what"><b>Figurspel</b><small>Varje tisdag kväll</small></span>
+                        <span class="tag">Nästa</span>
+                    </li>
+                    <li>
+                        <span class="day">Tor</span>
+                        <span class="what"><b>Brädspel</b><small>Klockan 18</small></span>
+                    </li>
+                    <li>
+                        <span class="day">Sön</span>
+                        <span class="what"><b>Kortspel</b><small>Nästan varje söndag från ca 10 <a href="#discord" class="inline-discord" aria-label="Kolla på Discord om det är speldag"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+</svg></a></small></span>
+                    </li>
+                </ul>
+                <div class="week-foot"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+</svg> Katrinehillsgatan 7b, 504 52 Borås</div>
+            </aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block: Mitt (bara inloggade) – Maja Medlem i dev-databasen -->
+    <section class="block mine only-member">
+        <span class="block-label">Mitt · bara inloggade</span>
+        <div class="wrap">
+            <h2>Hej Maja!</h2>
+            <div class="mine-grid">
+                <div class="card">
+                    <div class="mine-head">
+                        <h3>Mina anmälningar</h3>
+                    </div>
+                    <div class="mine-empty"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M6.146 7.146a.5.5 0 0 1 .708 0L8 8.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 9l1.147 1.146a.5.5 0 0 1-.708.708L8 9.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 9 6.146 7.854a.5.5 0 0 1 0-.708"/>
+  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+</svg> Inga kommande anmälningar</div>
+                    <a href="#" class="mine-link">Se evenemang <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+</svg></a>
+                </div>
+                <div class="card">
+                    <div class="mine-head">
+                        <h3>Mina bokningar</h3>
+                    </div>
+                    <div class="mine-empty"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M6.146 7.146a.5.5 0 0 1 .708 0L8 8.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 9l1.147 1.146a.5.5 0 0 1-.708.708L8 9.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 9 6.146 7.854a.5.5 0 0 1 0-.708"/>
+  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+</svg> Inga kommande bokningar</div>
+                    <a href="#" class="mine-link">Boka lokal <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+</svg></a>
+                </div>
+                <div class="card">
+                    <div class="mine-head">
+                        <h3>Medlemskap</h3>
+                    </div>
+                    <div class="mine-item">
+                        <div class="tile icon"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M5 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4m4-2.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5M9 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4A.5.5 0 0 1 9 8m1 2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5"/>
+  <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM1 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8.96q.04-.245.04-.5C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 1 1 12z"/>
+</svg></div>
+                        <div class="txt">
+                            <b>2026</b>
+                            <span>Enskilt medlemskap</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-green"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+</svg> Aktivt</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block: Siffror (bara gäster) – räknat i dev-databasen -->
+    <section class="block stats only-guest">
+        <span class="block-label">Siffror · räknas automatiskt</span>
+        <div class="wrap">
+            <div class="stats-grid">
+                <span class="stats-title">Armagedon 2026</span>
+                <div class="stat"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+</svg> <span class="num">9</span> medlemmar 2026</div>
+                <div class="stat"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5z"/>
+</svg> <span class="num">4</span> spelgrupper – brädspel, figurspel, rollspel m.fl.</div>
+                <div class="stat"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5"/>
+</svg> <span class="num">0</span> evenemang 2026</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block: Fri text (CMS-sidan hem) -->
+    <section class="block section section-soft-violet">
+        <span class="block-label">Fri text · CMS-sidan ”hem” via cms_content()</span>
+        <div class="wrap">
+            <div class="about">
+                <figure class="about-img">
+                    <div class="about-ph">
+                        <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+  <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+</svg>
+                        <span>Ingen bild<br><small>sidan ”hem” har ingen bild idag</small></span>
+                    </div>
+                </figure>
+                <div class="about-text">
+                    <div class="prose">
+                        <p>Armagedon är Borås spelförening för dig som är intresserad av spel i alla former. Vi håller till på Katrinehillsgatan 7b och arrangerar regelbundna spelkvällar varje vecka. Du får gärna komma och kika – nya besökare kan delta upp till tre gånger innan medlemskap krävs.</p>
+                    </div>
+                    <ul class="find-line">
+                        <li><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+</svg> Katrinehillsgatan 7b, 504 52 Borås</li>
+                        <li><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M5 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0m8 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-6-1a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2zm1-6c-1.876 0-3.426.109-4.552.226A.5.5 0 0 0 3 4.723v3.554a.5.5 0 0 0 .448.497C4.574 8.891 6.124 9 8 9s3.426-.109 4.552-.226A.5.5 0 0 0 13 8.277V4.723a.5.5 0 0 0-.448-.497A44 44 0 0 0 8 4m0-1c-1.837 0-3.353.107-4.448.22a.5.5 0 1 1-.104-.994A44 44 0 0 1 8 2c1.876 0 3.426.109 4.552.226a.5.5 0 1 1-.104.994A43 43 0 0 0 8 3"/>
+  <path d="M15 8a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1V2.64c0-1.188-.845-2.232-2.064-2.372A44 44 0 0 0 8 0C5.9 0 4.208.136 3.064.268 1.845.408 1 1.452 1 2.64V4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v3.5c0 .818.393 1.544 1 2v2a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V14h6v1.5a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-2c.607-.456 1-1.182 1-2zM8 1c2.056 0 3.71.134 4.822.261.676.078 1.178.66 1.178 1.379v8.86a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 11.5V2.64c0-.72.502-1.301 1.178-1.379A43 43 0 0 1 8 1"/>
+</svg> Radiohuset (linje 6)</li>
+                        <li><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M5.5 4.002h2.962C10.045 4.002 11 5.104 11 6.586c0 1.494-.967 2.578-2.55 2.578H6.784V12H5.5zm2.77 4.072c.893 0 1.419-.545 1.419-1.488s-.526-1.482-1.42-1.482H6.778v2.97z"/>
+  <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/>
+</svg> Parkering längs Katrinehillsgatan</li>
+                    </ul>
+                    <a href="http://discord.armagedon.se" class="btn btn-discord"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+</svg> Discord-server</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block: Våra grupper – CMS-sidorna under Aktiviteter (titel + underrubrik) -->
+    <section class="block section section-violet-band" id="grupper">
+        <span class="block-label">Aktiviteter · CMS-sidornas titel och underrubrik</span>
+        <div class="wrap">
+            <div class="section-head">
+                <h2 class="h2"><span class="swoosh-word">Aktiviteter<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span></h2>
+            </div>
+            <div class="groups">
+                <a href="#" class="card group">
+                    <span class="icon"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/>
+</svg><svg class="icon-swoosh" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span>
+                    <h3><span class="name">Rollspel<svg class="name-swoosh" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span></h3>
+                    <p>Fantasi, berättande och äventyr</p>
+                    <span class="link">Läs mer <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                </a>
+                <a href="#" class="card group">
+                    <span class="icon"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M13 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2zM3 0a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3a3 3 0 0 0-3-3z"/>
+  <path d="M5.5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m4-4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+</svg><svg class="icon-swoosh" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span>
+                    <h3><span class="name">Brädspel<svg class="name-swoosh" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span></h3>
+                    <p>Från Fia med knuff till Age of Steam</p>
+                    <span class="link">Läs mer <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                </a>
+                <a href="#" class="card group">
+                    <span class="icon"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M7.184 11.246A3.5 3.5 0 0 1 1 9c0-1.602 1.14-2.633 2.66-4.008C4.986 3.792 6.602 2.33 8 0c1.398 2.33 3.014 3.792 4.34 4.992C13.86 6.367 15 7.398 15 9a3.5 3.5 0 0 1-6.184 2.246 20 20 0 0 0 1.582 2.907c.231.35-.02.847-.438.847H6.04c-.419 0-.67-.497-.438-.847a20 20 0 0 0 1.582-2.907"/>
+</svg><svg class="icon-swoosh" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span>
+                    <h3><span class="name">Kortspel<svg class="name-swoosh" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span></h3>
+                    <p>Samlarkortspel och turneringar</p>
+                    <span class="link">Läs mer <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                </a>
+                <a href="#" class="card group">
+                    <span class="icon"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M8 14.933a1 1 0 0 0 .1-.025q.114-.034.294-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/>
+</svg><svg class="icon-swoosh" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span>
+                    <h3><span class="name">Figurspel<svg class="name-swoosh" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span></h3>
+                    <p>Taktik, strategi och konsthantverket att måla miniatyrer</p>
+                    <span class="link">Läs mer <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block: Discord – text från CMS-sidan hem, länk discord.armagedon.se -->
+    <section class="block discord-block" id="discord">
+        <span class="block-label">Discord · länk och text från ”hem”</span>
+        <div class="wrap">
+            <div class="discord-card">
+                <span class="discord-icon"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+</svg></span>
+                <div class="discord-text">
+                    <h2>Häng med på Discord</h2>
+                    <p>Gå med på vår Discord-server för att hålla koll på vad som händer. Där bekräftar vi också speldagar.</p>
+                </div>
+                <div class="discord-actions">
+                <a href="http://discord.armagedon.se" class="btn btn-discord btn-lg-ish"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+</svg> Gå med på Discord</a>
+                <a href="#" class="btn btn-secondary btn-lg-ish">Läs mer om Discord</a><!-- ingen CMS-sida om Discord ännu -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block: Kommande evenemang – inga i dev-databasen → tomt läge -->
+    <section class="block section section-alt">
+        <span class="block-label">Kommande evenemang</span>
+        <div class="wrap">
+            <div class="section-head">
+                <h2 class="h2"><span class="ev-flag-wrap">Kommande <span class="swoosh-word">evenemang<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span></span> <span class="example-flag ev-flag"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+</svg> Exempel – inga evenemang i databasen</span></h2>
+                <a href="#" class="more">Alla evenemang <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></a>
+            </div>
+            <div class="ev-grid ev-examples">
+                <a href="#" class="card ev">
+                    <div class="ev-head">
+                        <span class="ev-date"><b>7</b>nov</span>
+                        <span class="ev-when"><b>Lördag</b>kl. 10:00–17:00</span>
+                    </div>
+                    <h3>Namn på evenemang</h3>
+                    <div class="ev-meta">
+                        <span class="chip">Kortspel</span>
+                        <span><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+</svg> Lokalen</span>
+                    </div>
+                    <div class="ev-foot">
+                        <span class="badge badge-green"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+</svg> Öppen anmälan</span>
+                        <span class="ev-go">Anmäl dig <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                    </div>
+                </a>
+                <a href="#" class="card ev">
+                    <div class="ev-head">
+                        <span class="ev-date"><b>12</b>nov</span>
+                        <span class="ev-when"><b>Torsdag</b>kl. 18:00–21:00</span>
+                    </div>
+                    <h3>Namn på evenemang</h3>
+                    <div class="ev-meta">
+                        <span class="chip">Figurspel</span>
+                        <span><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+</svg> Lokalen</span>
+                    </div>
+                    <div class="ev-foot">
+                        <span class="badge badge-amber"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+</svg> Få platser kvar</span>
+                        <span class="ev-go">Anmäl dig <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                    </div>
+                </a>
+                <a href="#" class="card ev">
+                    <div class="ev-head">
+                        <span class="ev-date"><b>5</b>dec</span>
+                        <span class="ev-when"><b>Lördag</b>kl. 17:00</span>
+                    </div>
+                    <h3>Namn på evenemang</h3>
+                    <div class="ev-meta">
+                        <span class="chip">Alla</span>
+                        <span><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+  <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+</svg> Endast medlemmar</span>
+                    </div>
+                    <div class="ev-foot">
+                        <span class="badge badge-neutral"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"/>
+</svg> Väntelista</span>
+                        <span class="ev-go">Läs mer <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                    </div>
+                </a>
+            </div>
+            <div class="card empty ev-empty">
+                <span class="empty-icon"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+</svg></span>
+                <p>Inga kommande evenemang just nu.</p>
+                <a href="#discord" class="mine-link">Håll koll på Discord <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+</svg></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block: Puffar – EXEMPEL (ingen data, #105). Rubrikerna är exemplen ur issue #105 -->
+    <section class="block section">
+        <span class="block-label">Puffar · ”visa på startsidan” (#105)</span>
+        <div class="wrap">
+            <div class="section-head">
+                <h2 class="h2"><span class="swoosh-word">Puffar<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span> <span class="example-flag"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+</svg> Exempel – ingen data än</span></h2>
+            </div>
+            <div class="bento">
+                <a href="#" class="card puff-feature">
+                    <div class="pf-img">
+                        <span class="pf-icon"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M13 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2zM3 0a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3a3 3 0 0 0-3-3z"/>
+  <path d="M5.5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m4-4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+</svg></span>
+                    </div>
+                    <div class="pf-body">
+                        <span class="pf-kicker"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+</svg> Varje torsdag</span>
+                        <h3>Brädspelskväll varje torsdag</h3>
+                        <p>Kort text om det som puffen lyfter fram.</p>
+                        <span class="btn btn-primary">Knapptext <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                    </div>
+                </a>
+                <a href="#" class="card puff-small tint-yellow">
+                    <span class="ps-icon"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2zm3.564 1.426L5.596 5 8 5.961 14.154 3.5zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464z"/>
+</svg></span>
+                    <div>
+                        <h3>Hyr ett förråd</h3>
+                        <p>Kort text om det som puffen lyfter fram.</p>
+                        <span class="ps-link">Knapptext <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                    </div>
+                </a>
+                <a href="#" class="card puff-small tint-orange">
+                    <span class="ps-icon"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+</svg></span>
+                    <div>
+                        <h3>Bli funktionär</h3>
+                        <p>Kort text om det som puffen lyfter fram.</p>
+                        <span class="ps-link">Knapptext <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block: Nyheter – EXEMPEL (ingen data, #53/#54) -->
+    <section class="block section section-alt">
+        <span class="block-label">Nyheter · senaste (#53/#54)</span>
+        <div class="wrap">
+            <div class="section-head">
+                <h2 class="h2"><span class="swoosh-word">Nyheter<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 45 3, 110 2, 197 7" fill="none" stroke="url(#swoosh)" stroke-width="5" stroke-linecap="round"/></svg></span> <span class="example-flag"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+</svg> Exempel – ingen data än</span></h2>
+                <a href="#" class="more">Alla nyheter <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></a>
+            </div>
+            <a href="#" class="card news-lead">
+                <div class="nl-img">
+                    <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+  <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+</svg>
+                    <span>Nyhetens bild</span>
+                </div>
+                <div class="nl-body">
+                    <div class="news-top">
+                        <span class="pin"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a6 6 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707s.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a6 6 0 0 1 1.013.16l3.134-3.133a3 3 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146"/>
+</svg> Fäst</span>
+                        <span class="chip">Tagg</span>
+                        <time><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z"/>
+  <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+</svg> 20 oktober</time>
+                    </div>
+                    <h3>Rubrik på den viktigaste nyheten</h3>
+                    <p>Ingress – de första raderna av nyheten visas här, så att man förstår vad den handlar om utan att klicka.</p>
+                    <span class="news-more">Läs hela nyheten <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                </div>
+            </a>
+            <div class="news-list">
+                <a href="#" class="nli">
+                    <span class="nli-date"><b>14</b>okt</span>
+                    <span class="nli-txt"><b>Rubrik på en nyhet</b><small><span class="chip">Tagg</span> Ingress i en rad …</small></span>
+                    <span class="nli-go"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                </a>
+                <a href="#" class="nli">
+                    <span class="nli-date"><b>2</b>okt</span>
+                    <span class="nli-txt"><b>Rubrik på en nyhet</b><small><span class="chip">Tagg</span> Ingress i en rad …</small></span>
+                    <span class="nli-go"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                </a>
+                <a href="#" class="nli">
+                    <span class="nli-date"><b>24</b>sep</span>
+                    <span class="nli-txt"><b>Rubrik på en nyhet</b><small><span class="chip">Tagg</span> Ingress i en rad …</small></span>
+                    <span class="nli-go"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block: CTA – EXEMPEL (ingen text finns, knappar från #104) -->
+    <section class="block cta">
+        <span class="block-label">CTA · text, knappar (#104)</span>
+        <div class="wrap">
+            <div class="cta-panel">
+                <div>
+                    <span class="example-flag"><svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+</svg> Exempel – ingen text än</span>
+                    <h2>Rubrik för uppmaningen</h2>
+                    <p>Kort text som uppmanar besökaren att göra något.</p>
+                </div>
+                <div class="actions">
+                    <a href="#" class="btn btn-primary only-guest">Bli medlem <svg class="bi" viewBox="0 0 16 16" aria-hidden="true">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></a>
+                    <a href="#" class="btn btn-secondary">Knapptext</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Befintlig ram: sidfot (hjälptexter footer.*) – länkar som rad, tom "Sociala medier" visas inte -->
+    <footer class="footer">
+        <div class="wrap">
+            <div class="footer-top">
+                <a href="#" class="logo footer-logo">
+                    <img class="logo-light" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgoKPHN2ZwogICB3aWR0aD0iMjQyIgogICBoZWlnaHQ9Ijg0IgogICB2aWV3Qm94PSIzMCA2MCAyNDIgODQiCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9InN2ZzEiCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGRlZnMKICAgICBpZD0iZGVmczEiPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDIiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTEzLjc0MTUsLTE5LjQyOTA5OCkiCiAgICAgICAgIGlkPSJwYXRoMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoNCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMTMuNzQxNSwtMzIuOTk1NTAzKSIKICAgICAgICAgaWQ9InBhdGg0IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGg2Ij4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE0OC42MTAyLC0xMDIuNzA3OSkiCiAgICAgICAgIGlkPSJwYXRoNiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC05NC4wNDcyMDUsLTExMC43OTI5KSIKICAgICAgICAgaWQ9InBhdGg4IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxMCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC05My4wNDU3LC0xMjMuODk1NCkiCiAgICAgICAgIGlkPSJwYXRoMTAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDEyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTg3LjcyNCwtMTAyLjM4NjcxKSIKICAgICAgICAgaWQ9InBhdGgxMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMTQiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTExLjY4MiwtMTgyLjA2MzkpIgogICAgICAgICBpZD0icGF0aDE0IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxNiI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMTUuODAxMTEsLTE4NC44MjkpIgogICAgICAgICBpZD0icGF0aDE2IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNjguNzg4NCwtMTE4Ljg4MTMxKSIKICAgICAgICAgaWQ9InBhdGgxOCIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMjAiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzIyLjE1ODUxLC0xNDEuMDI5MikiCiAgICAgICAgIGlkPSJwYXRoMjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDIyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTM4NS4xMjM4MSwtOTUuMDE4KSIKICAgICAgICAgaWQ9InBhdGgyMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMjQiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNDI1LjI1NDcxLC0xMDUuMjMzOCkiCiAgICAgICAgIGlkPSJwYXRoMjQiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDI2Ij4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQ2NS44NjAyMSwtMTI1LjQyNjIpIgogICAgICAgICBpZD0icGF0aDI2IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgyOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01MTguMzkyNDIsLTEzMC40MTQpIgogICAgICAgICBpZD0icGF0aDI4IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgzMCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01NjMuNTMwMTIsLTEwNi41NTA3MSkiCiAgICAgICAgIGlkPSJwYXRoMzAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTYwNC4wNjUyMiwtMTE3LjcyNDEpIgogICAgICAgICBpZD0icGF0aDMyIiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgzNCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02NjUuMzk0MzIsLTk1LjAxOCkiCiAgICAgICAgIGlkPSJwYXRoMzQiIC8+CiAgICA8L2NsaXBQYXRoPgogIDwvZGVmcz4KICA8ZwogICAgIGlkPSJsYXllcjEiCiAgICAgc3R5bGU9ImRpc3BsYXk6aW5saW5lIj4KICAgIDxnCiAgICAgICBpZD0iZzYyIgogICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMC4yNjQ1ODMzMywwLDAsMC4yNjQ1ODMzMywyNS4yMTIxMDcsNjEuMjkyNTU5KSI+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMSIKICAgICAgICAgZD0iTSAwLDAgQyAtMi4yMTcsMCAtNC40MzUsMC41NzMgLTYuNDIxLDEuNzIxIEwgLTgwLjE1NCw0NC4yOSBjIC0zLjk3NCwyLjI5NSAtNi40MjIsNi41MzUgLTYuNDIyLDExLjEyMyB2IDg1LjEzOSBjIDAsNC41ODkgMi40NDgsOC44MjggNi40MjIsMTEuMTIzIGwgNzMuNzMzLDQyLjU2OSBjIDEuOTg2LDEuMTQ3IDQuMjA0LDEuNzIxIDYuNDIxLDEuNzIxIDIuMjE4LDAgNC40MzUsLTAuNTc0IDYuNDIyLC0xLjcyMSBsIDczLjczMiwtNDIuNTY5IGMgMy45NzMsLTIuMjk1IDYuNDIyLC02LjUzNCA2LjQyMiwtMTEuMTIzIFYgNTUuNDEzIGMgMCwtNC41ODggLTIuNDQ5LC04LjgyOCAtNi40MjIsLTExLjEyMyBMIDYuNDIyLDEuNzIxIEMgNC40MzUsMC41NzMgMi4yMTgsMCAwLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZGRkMTA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxNTEuNjU1MzMsMjg2Ljc1NTg3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMyIKICAgICAgICAgZD0ibSAwLDAgYyAtMC44MDYsMCAtMS42MTIsMC4yMDkgLTIuMzM1LDAuNjI2IGwgLTY5LjA2MiwzOS44NzMgYyAtMS40NDUsMC44MzQgLTIuMzM1LDIuMzc2IC0yLjMzNSw0LjA0NCB2IDc5Ljc0NiBjIDAsMS42NjkgMC44OSwzLjIxIDIuMzM1LDQuMDQ0IGwgNjkuMDYyLDM5Ljg3MyBjIDAuNzIzLDAuNDE4IDEuNTI5LDAuNjI2IDIuMzM1LDAuNjI2IDAuODA3LDAgMS42MTMsLTAuMjA4IDIuMzM1LC0wLjYyNiBsIDY5LjA2MSwtMzkuODczIGMgMS40NDYsLTAuODM0IDIuMzM2LC0yLjM3NSAyLjMzNiwtNC4wNDQgViA0NC41NDMgYyAwLC0xLjY2OCAtMC44OSwtMy4yMSAtMi4zMzYsLTQuMDQ0IEwgMi4zMzUsMC42MjYgQyAxLjYxMywwLjIwOSAwLjgwNywwIDAsMCIKICAgICAgICAgc3R5bGU9ImZpbGw6IzIzMWYyMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDE1MS42NTUzMywyNjguNjY3MzMpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGg0KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGg1IgogICAgICAgICBkPSJtIDAsMCAtMjguMjI0LC01NC40MDkgNTYuNDQ4LDMyLjgyMyB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZmJjNzEyO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTk4LjE0NjkzLDE3NS43MTc0NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDYpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDciCiAgICAgICAgIGQ9Ik0gMCwwIFYgMCBMIDEuNTg1LDYuNDA3IFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiM0ZjRjNGQ7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxMjUuMzk2MjcsMTY0LjkzNzQ3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoOCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoOSIKICAgICAgICAgZD0ibSAwLDAgLTUuOTUsMTQuNjIgLTEzLjQ2NSwtMzkuNTA4IDE1LjQ2Niw4LjkyOCB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZmJjNzA3O2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTI0LjA2MDkzLDE0Ny40Njc0NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDEwKSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxMSIKICAgICAgICAgZD0iTSAwLDAgLTM3LjE4MSwtMjEuNDYyIC05LjI5NCwtMzcuNTYzIFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmOWE3MGQ7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxMTYuOTY1MzMsMTc2LjE0NTczKSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMTIpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDEzIgogICAgICAgICBkPSJNIDAsMCAtMjkuNTQsLTExOS4zODQgMCwtMTM2LjQzOCBaIgogICAgICAgICBzdHlsZT0iZmlsbDojZWI4MTExO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTQ4LjkwOTMzLDY5LjkwOTQ2NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDE0KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxNSIKICAgICAgICAgZD0iTSAwLDAgViAtMTM2LjQyMiBMIDI5LjQ4NywtNzkuNTggWiIKICAgICAgICAgc3R5bGU9ImZpbGw6I2ZlZTgxYjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDE1NC40MDE0Nyw2Ni4yMjI2NjcpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgxNikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMTciCiAgICAgICAgIGQ9Im0gMCwwIC0yLjUxNCw5LjU3OCBjIC0wLjU4NiwyLjEyOCAtMS4yOTcsNC44ODEgLTIuMTM1LDguMjYgLTAuODM4LDMuMzc4IC0xLjM5MSw1Ljc5OSAtMS42NTYsNy4yNjMgLTAuMjQsLTEuMzU3IC0wLjcxMywtMy41OTIgLTEuNDE3LC02LjcwNSBDIC04LjQyNywxNS4yODQgLTkuOTksOS4xNTIgLTEyLjQxMSwwIFogbSA2LjE0NSwtMjMuODYzIC0yLjg3MywxMC45MzQgaCAtMTguOTU1IGwgLTIuOTUzLC0xMC45MzQgSCAtMzUuOTU1IEwgLTE2LjkyLDM0LjcxOCBIIDQuMTEgbCAxOS4yNzQsLTU4LjU4MSB6IgogICAgICAgICBzdHlsZT0iZmlsbDojMjMxZjIwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMzU4LjM4NDUzLDE1NC4xNTI5MykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDE4KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxOSIKICAgICAgICAgZD0ibSAwLDAgYyAxLjM1NywwIDIuNjQ3LC0wLjEwNyAzLjg3MSwtMC4zMTkgbCAwLjg3OCwtMC4xNiAtMS4zOTcsLTE0LjcyNSBjIC0xLjI3NywwLjMxOSAtMy4wNDYsMC40NzkgLTUuMzA4LDAuNDc5IC0zLjQwNSwwIC01Ljg3OSwtMC43NzggLTcuNDIyLC0yLjMzNSAtMS41NDMsLTEuNTU2IC0yLjMxNCwtMy43OTggLTIuMzE0LC02LjcyNCB2IC0yMi4yMjcgaCAtMTUuNjAzIHYgNDUuMjEzIGggMTEuNjEyIGwgMi40MzQsLTcuMjIzIGggMC43NTkgYyAxLjMwMiwyLjM5NCAzLjExOCw0LjMzIDUuNDQ3LDUuODA2IEMgLTQuNzE2LC0wLjczOCAtMi4zNjgsMCAwLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyMzFmMjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw0MjkuNTQ0NjcsMTI0LjYyMjQpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyMCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjEiCiAgICAgICAgIGQ9Im0gMCwwIHYgMjQuNTgyIGMgMCwzLjA1OSAtMC40MTgsNS4zNTQgLTEuMjU2LDYuODgzIC0wLjgzOCwxLjUzIC0yLjE2MiwyLjI5NSAtMy45NzEsMi4yOTUgLTIuMzk0LDAgLTQuMTUsLTEuMDI1IC01LjI2NywtMy4wNzMgLTEuMTE3LC0yLjA0OSAtMS42NzYsLTUuMjU0IC0xLjY3NiwtOS42MTcgViAwIGggLTE1LjY0MyB2IDI0LjU4MiBjIDAsMy4wNTkgLTAuMzk5LDUuMzU0IC0xLjE5OCw2Ljg4MyAtMC43OTgsMS41MyAtMi4wODgsMi4yOTUgLTMuODcsMi4yOTUgLTIuNDQ4LDAgLTQuMjMsLTEuMDkxIC01LjM0OCwtMy4yNzIgLTEuMTE3LC0yLjE4MiAtMS42NzYsLTUuNzQ3IC0xLjY3NiwtMTAuNjk1IFYgMCBoIC0xNS42MDMgdiA0NS4yMTMgaCAxMS43NzIgbCAxLjk1NiwtNS41ODcgaCAwLjkxOCBjIDEuMTk2LDIuMDc1IDIuOTMzLDMuNjU4IDUuMjA3LDQuNzQ5IDIuMjc1LDEuMDkgNC44NjIsMS42MzYgNy43NjIsMS42MzYgNi41MTgsMCAxMS4wOTQsLTEuOTgyIDEzLjcyNywtNS45NDYgaCAxLjIzOCBjIDEuMjc2LDEuODYyIDMuMDUzLDMuMzE4IDUuMzI2LDQuMzcgMi4yNzYsMS4wNSA0Ljc4MiwxLjU3NiA3LjUyNCwxLjU3NiA1LjM0NiwwIDkuMjk3LC0xLjM3IDExLjg1MSwtNC4xMSAyLjU1MywtMi43NDEgMy44MzEsLTYuOTA0IDMuODMxLC0xMi40OTEgViAwIFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyMzFmMjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw1MTMuNDk4NCwxODUuOTcwNjcpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyMikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjMiCiAgICAgICAgIGQ9Ik0gMCwwIEMgMS44ODksMCAzLjUwNSwwLjU5OSA0Ljg0OSwxLjc5NiA2LjE5MSwyLjk5MyA2Ljg2NCw0LjU0OSA2Ljg2NCw2LjQ2NSBWIDkuOTc3IEwgMy4yNzIsOS44MTcgQyAtMS44NjIsOS42MyAtNC40Myw3Ljc0MiAtNC40Myw0LjE1IC00LjQzLDEuMzgzIC0yLjk1MywwIDAsMCBNIDExLjU3MiwtMTAuMjE2IDguNTgsLTQuMjMgSCA4LjI2MSBDIDYuMTU4LC02LjgzNyA0LjAxNywtOC42MiAxLjgzNiwtOS41NzcgYyAtMi4xODIsLTAuOTU4IC01LjAwMiwtMS40MzcgLTguNDYsLTEuNDM3IC00LjI1NywwIC03LjYwOSwxLjI3NyAtMTAuMDU3LDMuODMxIC0yLjQ0NywyLjU1NCAtMy42NzEsNi4xNDUgLTMuNjcxLDEwLjc3NCAwLDQuODE1IDEuNjc2LDguNDAxIDUuMDI5LDEwLjc1NSAzLjM1MSwyLjM1NCA4LjIwNiwzLjY3NyAxNC41NjUsMy45NyBsIDcuNTQyLDAuMjQgdiAwLjYzOCBjIDAsMy43MjUgLTEuODM2LDUuNTg3IC01LjUwNyw1LjU4NyAtMy4yOTgsMCAtNy40ODksLTEuMTE3IC0xMi41NywtMy4zNTIgbCAtNC41MSwxMC4yOTYgYyA1LjI2OCwyLjcxMyAxMS45MTgsNC4wNyAxOS45NTMsNC4wNyA1Ljc5OSwwIDEwLjI4OSwtMS40MzcgMTMuNDY4LC00LjMxIDMuMTc5LC0yLjg3MyA0Ljc2OSwtNi44OSA0Ljc2OSwtMTIuMDUxIHYgLTI5LjY1IHoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyMzFmMjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw1NjcuMDA2MjcsMTcyLjM0OTYpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyNCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjUiCiAgICAgICAgIGQ9Im0gMCwwIGMgMCwtNC42MjkgMS42MDksLTYuOTQ0IDQuODI5LC02Ljk0NCAxLjQ4OSwwIDIuNjQsMC41NzIgMy40NTEsMS43MTYgMC44MTIsMS4xNDQgMS4yMTgsMi44NiAxLjIxOCw1LjE0OCAwLDQuNjgyIC0xLjU1Nyw3LjAyMyAtNC42NjksNy4wMjMgQyAxLjYwOSw2Ljk0MyAwLDQuNjI5IDAsMCBtIC00LjkwOCwtMzYuMDM1IGMgMCwtMS4yNzcgMC42OTEsLTIuMzA4IDIuMDc1LC0zLjA5MyAxLjM4MywtMC43ODQgMy4yMzIsLTEuMTc3IDUuNTQ3LC0xLjE3NyAzLjc3NywwIDYuODA0LDAuNDczIDkuMDc4LDEuNDE3IDIuMjc1LDAuOTQ1IDMuNDEyLDIuMTYxIDMuNDEyLDMuNjUxIDAsMS4xOTcgLTAuNjkyLDIuMDQyIC0yLjA3NSwyLjUzNCAtMS4zODMsMC40OTMgLTMuMzY1LDAuNzM5IC01Ljk0NSwwLjczOSBIIDEuMDc4IGMgLTEuNjc3LDAgLTMuMDkzLC0wLjM5MyAtNC4yNSwtMS4xNzggLTEuMTU3LC0wLjc4NCAtMS43MzYsLTEuNzQ5IC0xLjczNiwtMi44OTMgbSAzNC4wNzksNTAuODQgViA3LjI2MyBMIDIyLjk4Niw0Ljk4OCBjIDAuODUxLC0xLjU0MyAxLjI3NywtMy4zMzkgMS4yNzcsLTUuMzg3IDAsLTQuODY5IC0xLjcxLC04LjY0NyAtNS4xMjgsLTExLjMzMyAtMy40MTksLTIuNjg4IC04LjUyLC00LjAzMSAtMTUuMzA0LC00LjAzMSAtMS42NzYsMCAtMy4wMDcsMC4xMDYgLTMuOTksMC4zMTkgLTAuMzczLC0wLjY5MiAtMC41NTksLTEuMzQzIC0wLjU1OSwtMS45NTUgMCwtMC43NzIgMC42MjUsLTEuMzY0IDEuODc1LC0xLjc3NiAxLjI1MSwtMC40MTIgMi44ODcsLTAuNjE4IDQuOTA5LC0wLjYxOCBoIDcuNTAyIGMgMTAuMTM2LDAgMTUuMjA0LC00LjI3IDE1LjIwNCwtMTIuODEgMCwtNS41MDcgLTIuMzQ4LC05Ljc5IC03LjA0MywtMTIuODQ5IC00LjY5NiwtMy4wNiAtMTEuMjg4LC00LjU5IC0xOS43NzMsLTQuNTkgLTYuNDEyLDAgLTExLjM1MywxLjA3MSAtMTQuODI1LDMuMjEzIC0zLjQ3MiwyLjE0MSAtNS4yMDgsNS4yMjEgLTUuMjA4LDkuMjM4IDAsNS40MDEgMy4zNTIsOC44ODUgMTAuMDU2LDEwLjQ1NSAtMS4zODMsMC41ODUgLTIuNTg3LDEuNTMgLTMuNjExLDIuODMzIC0xLjAyNCwxLjMwMyAtMS41MzcsMi41OTQgLTEuNTM3LDMuODcxIDAsMS40MSAwLjM4NiwyLjY1NCAxLjE1NywzLjczMSAwLjc3MiwxLjA3OCAyLjM4MSwyLjM2MSA0LjgyOSwzLjg1MSAtMi4zNDEsMS4wMzggLTQuMTgzLDIuNjYgLTUuNTI3LDQuODY5IC0xLjM0NCwyLjIwOCAtMi4wMTUsNC44OTUgLTIuMDE1LDguMDYxIDAsNC45MjEgMS42NzYsOC43MzkgNS4wMjksMTEuNDUyIDMuMzUxLDIuNzE0IDguMTQsNC4wNzEgMTQuMzY1LDQuMDcxIDAuODI0LDAgMi4yNDgsLTAuMDk0IDQuMjcsLTAuMjggMi4wMjIsLTAuMTg2IDMuNTEyLC0wLjM1OSA0LjQ2OSwtMC41MTggeiIKICAgICAgICAgc3R5bGU9ImZpbGw6IzIzMWYyMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDYyMS4xNDY5MywxNDUuNDI2NCkiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDI2KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgyNyIKICAgICAgICAgZD0iTSAwLDAgQyAtMS44MzYsMCAtMy4zNzIsLTAuNTc5IC00LjYwOSwtMS43MzYgLTUuODQ3LC0yLjg5MyAtNi41NzEsLTQuNzA4IC02Ljc4NCwtNy4xODMgSCA2LjYyNCBDIDYuNTcsLTUuMDAyIDUuOTUyLC0zLjI1OSA0Ljc2OSwtMS45NTUgMy41ODUsLTAuNjUyIDEuOTk1LDAgMCwwIG0gMC45MTgsLTM2LjE5NCBjIC03LjUyOSwwIC0xMy4zNzUsMi4wMDIgLTE3LjUzOSw2LjAwNiAtNC4xNjMsNC4wMDMgLTYuMjQ1LDkuNzAzIC02LjI0NSwxNy4wOTkgMCw3LjYzNSAxLjkyOSwxMy40OTQgNS43ODYsMTcuNTc5IDMuODU3LDQuMDgzIDkuMzY0LDYuMTI1IDE2LjUyMSw2LjEyNSA2LjgxLDAgMTIuMDcyLC0xLjc3NiAxNS43ODMsLTUuMzI3IDMuNzExLC0zLjU1MiA1LjU2NywtOC42NjcgNS41NjcsLTE1LjM0NCB2IC02Ljk0MyBIIC03LjEwNCBjIDAuMTA3LC0yLjUyOCAxLjAzMiwtNC41MSAyLjc3NCwtNS45NDYgMS43NDIsLTEuNDM3IDQuMTE3LC0yLjE1NiA3LjEyMywtMi4xNTYgMi43NCwwIDUuMjYxLDAuMjYgNy41NjIsMC43NzkgMi4zMDEsMC41MTkgNC43OTUsMS40MDMgNy40ODMsMi42NTQgdiAtMTEuMjE0IGMgLTIuNDQ4LC0xLjI1MSAtNC45NzYsLTIuMTE1IC03LjU4MiwtMi41OTQgLTIuNjA4LC0wLjQ3OSAtNS43MjEsLTAuNzE4IC05LjMzOCwtMC43MTgiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyMzFmMjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw2OTEuMTg5ODcsMTM4Ljc3NikiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDI4KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgyOSIKICAgICAgICAgZD0ibSAwLDAgYyAyLjUsMCA0LjI2MywwLjc4NCA1LjI4NywyLjM1NCAxLjAyNCwxLjU3IDEuNTc2LDMuOTkxIDEuNjU2LDcuMjYzIHYgMS4yMzcgYyAwLDMuOTkxIC0wLjU3Miw2LjgzMSAtMS43MTUsOC41MiAtMS4xNDUsMS42ODkgLTIuOTQxLDIuNTM0IC01LjM4OCwyLjUzNCAtMi4wNDksMCAtMy42MzksLTAuOTY1IC00Ljc2OSwtMi44OTMgLTEuMTMxLC0xLjkyOSAtMS42OTYsLTQuNjc2IC0xLjY5NiwtOC4yNDEgMCwtMy41MTEgMC41NzIsLTYuMTg1IDEuNzE2LC04LjAyMSBDIC0zLjc2NiwwLjkxOCAtMi4xMjksMCAwLDAgbSAtNi4zODYsLTEyLjMzMSBjIC0zLjIxOCwwIC02LjAzMiwwLjkxOCAtOC40MzksMi43NTQgLTIuNDA4LDEuODM1IC00LjI3MSw0LjUzNSAtNS41ODcsOC4xIC0xLjMxNywzLjU2NSAtMS45NzYsNy43MjggLTEuOTc2LDEyLjQ5MSAwLDcuMzQyIDEuNDc3LDEzLjA4OSA0LjQzLDE3LjIzOSAyLjk1Myw0LjE1IDcuMDEsNi4yMjYgMTIuMTcxLDYuMjI2IDIuNTI3LDAgNC43NDIsLTAuNTA2IDYuNjQ0LC0xLjUxNyAxLjkwMiwtMS4wMTEgMy42MzgsLTIuNzEzIDUuMjA4LC01LjEwOCBoIDAuMzIgQyA1Ljg3OSwzMS4zOTIgNS42MjYsMzQuOTMgNS42MjYsMzguNDY5IFYgNTAuNTYgSCAyMS4zNDkgViAtMTEuNTMzIEggOS41NzcgTCA2LjIyNSwtNS44MjYgSCA1LjYyNiBjIC0yLjY4OCwtNC4zMzcgLTYuNjksLTYuNTA1IC0xMi4wMTIsLTYuNTA1IgogICAgICAgICBzdHlsZT0iZmlsbDojMjMxZjIwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsNzUxLjM3MzQ3LDE3MC41OTM3MykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDMwKSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgzMSIKICAgICAgICAgZD0ibSAwLDAgYyAwLC0zLjg4NCAwLjUxOSwtNi44NDQgMS41NTcsLTguODc5IDEuMDM3LC0yLjAzNSAyLjc3OSwtMy4wNTMgNS4yMjcsLTMuMDUzIDIuNDIsMCA0LjEzLDEuMDE4IDUuMTI4LDMuMDUzIDAuOTk3LDIuMDM1IDEuNDk2LDQuOTk1IDEuNDk2LDguODc5IDAsMy44NTcgLTAuNTA2LDYuNzcxIC0xLjUxNiw4LjczOSAtMS4wMTEsMS45NjkgLTIuNzQxLDIuOTUzIC01LjE4OCwyLjk1MyAtMi4zOTQsMCAtNC4xMSwtMC45NzcgLTUuMTQ3LC0yLjkzMyBDIDAuNTE5LDYuODA0IDAsMy44ODQgMCwwIG0gMjkuMjkxLDAgYyAwLC03LjM5NiAtMS45ODksLTEzLjE2MyAtNS45NjYsLTE3LjI5OSAtMy45NzcsLTQuMTM3IC05LjU0NSwtNi4yMDUgLTE2LjcwMSwtNi4yMDUgLTYuODYzLDAgLTEyLjMyNCwyLjExNSAtMTYuMzgxLDYuMzQ1IC00LjA1Nyw0LjIzIC02LjA4Niw5Ljk1IC02LjA4NiwxNy4xNTkgMCw3LjM2OSAxLjk4OSwxMy4wOTUgNS45NjYsMTcuMTggMy45NzgsNC4wODMgOS41NTgsNi4xMjUgMTYuNzQsNi4xMjUgNC40NDQsMCA4LjM2NywtMC45NDUgMTEuNzczLC0yLjgzMyAzLjQwNSwtMS44ODkgNi4wMzIsLTQuNTk3IDcuODgyLC04LjEyMSBDIDI4LjM2Niw4LjgyNiAyOS4yOTEsNC43MDkgMjkuMjkxLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyMzFmMjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw4MDUuNDIwMjcsMTU1LjY5NTg3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMzIpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDMzIgogICAgICAgICBkPSJtIDAsMCB2IDI0LjY2MiBjIDAsMy4wMDUgLTAuNDMzLDUuMjc0IC0xLjI5Nyw2LjgwMyAtMC44NjUsMS41MyAtMi4yNTUsMi4yOTUgLTQuMTcxLDIuMjk1IC0yLjYzMywwIC00LjUzNiwtMS4wNTEgLTUuNzA2LC0zLjE1MyAtMS4xNzEsLTIuMTAyIC0xLjc1NiwtNS43MDYgLTEuNzU2LC0xMC44MTQgViAwIGggLTE1LjYwMiB2IDQ1LjIxMyBoIDExLjc3MSBsIDEuOTU1LC01LjU4NyBoIDAuOTE4IGMgMS4zMywyLjEyOCAzLjE3MywzLjcyNSA1LjUyOCw0Ljc4OSAyLjM1NCwxLjA2NCA1LjA2MSwxLjU5NiA4LjEyMSwxLjU5NiA1LjAwMSwwIDguODkxLC0xLjQ1IDExLjY3MiwtNC4zNSAyLjc3OSwtMi45IDQuMTcsLTYuOTgzIDQuMTcsLTEyLjI1MSBWIDAgWiIKICAgICAgICAgc3R5bGU9ImZpbGw6IzIzMWYyMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDg4Ny4xOTI0LDE4NS45NzA2NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDM0KSIgLz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPgo=" alt="Armagedon">
+                    <img class="logo-dark" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgoKPHN2ZwogICB3aWR0aD0iMjQyIgogICBoZWlnaHQ9Ijg0IgogICB2aWV3Qm94PSIzMCA2MCAyNDIgODQiCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9InN2ZzEiCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGRlZnMKICAgICBpZD0iZGVmczEiPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDIiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTEzLjc0MTUsLTE5LjQyOTA5OCkiCiAgICAgICAgIGlkPSJwYXRoMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoNCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMTMuNzQxNSwtMzIuOTk1NTAzKSIKICAgICAgICAgaWQ9InBhdGg0IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGg2Ij4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE0OC42MTAyLC0xMDIuNzA3OSkiCiAgICAgICAgIGlkPSJwYXRoNiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC05NC4wNDcyMDUsLTExMC43OTI5KSIKICAgICAgICAgaWQ9InBhdGg4IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxMCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC05My4wNDU3LC0xMjMuODk1NCkiCiAgICAgICAgIGlkPSJwYXRoMTAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDEyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTg3LjcyNCwtMTAyLjM4NjcxKSIKICAgICAgICAgaWQ9InBhdGgxMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMTQiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTExLjY4MiwtMTgyLjA2MzkpIgogICAgICAgICBpZD0icGF0aDE0IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxNiI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMTUuODAxMTEsLTE4NC44MjkpIgogICAgICAgICBpZD0icGF0aDE2IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgxOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNjguNzg4NCwtMTE4Ljg4MTMxKSIKICAgICAgICAgaWQ9InBhdGgxOCIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMjAiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzIyLjE1ODUxLC0xNDEuMDI5MikiCiAgICAgICAgIGlkPSJwYXRoMjAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDIyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTM4NS4xMjM4MSwtOTUuMDE4KSIKICAgICAgICAgaWQ9InBhdGgyMiIgLz4KICAgIDwvY2xpcFBhdGg+CiAgICA8Y2xpcFBhdGgKICAgICAgIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIgogICAgICAgaWQ9ImNsaXBQYXRoMjQiPgogICAgICA8cGF0aAogICAgICAgICBkPSJNIDAsMjM0LjQ5NiBIIDcwNy42MDkgViAwIEggMCBaIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNDI1LjI1NDcxLC0xMDUuMjMzOCkiCiAgICAgICAgIGlkPSJwYXRoMjQiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDI2Ij4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQ2NS44NjAyMSwtMTI1LjQyNjIpIgogICAgICAgICBpZD0icGF0aDI2IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgyOCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01MTguMzkyNDIsLTEzMC40MTQpIgogICAgICAgICBpZD0icGF0aDI4IiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgzMCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01NjMuNTMwMTIsLTEwNi41NTA3MSkiCiAgICAgICAgIGlkPSJwYXRoMzAiIC8+CiAgICA8L2NsaXBQYXRoPgogICAgPGNsaXBQYXRoCiAgICAgICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgICAgIGlkPSJjbGlwUGF0aDMyIj4KICAgICAgPHBhdGgKICAgICAgICAgZD0iTSAwLDIzNC40OTYgSCA3MDcuNjA5IFYgMCBIIDAgWiIKICAgICAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTYwNC4wNjUyMiwtMTE3LjcyNDEpIgogICAgICAgICBpZD0icGF0aDMyIiAvPgogICAgPC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aAogICAgICAgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICBpZD0iY2xpcFBhdGgzNCI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Ik0gMCwyMzQuNDk2IEggNzA3LjYwOSBWIDAgSCAwIFoiCiAgICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02NjUuMzk0MzIsLTk1LjAxOCkiCiAgICAgICAgIGlkPSJwYXRoMzQiIC8+CiAgICA8L2NsaXBQYXRoPgogIDwvZGVmcz4KICA8ZwogICAgIGlkPSJsYXllcjEiCiAgICAgc3R5bGU9ImRpc3BsYXk6aW5saW5lIj4KICAgIDxnCiAgICAgICBpZD0iZzYyIgogICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMC4yNjQ1ODMzMywwLDAsMC4yNjQ1ODMzMywyNS4yMTIxMDcsNjEuMjkyNTU5KSI+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMSIKICAgICAgICAgZD0iTSAwLDAgQyAtMi4yMTcsMCAtNC40MzUsMC41NzMgLTYuNDIxLDEuNzIxIEwgLTgwLjE1NCw0NC4yOSBjIC0zLjk3NCwyLjI5NSAtNi40MjIsNi41MzUgLTYuNDIyLDExLjEyMyB2IDg1LjEzOSBjIDAsNC41ODkgMi40NDgsOC44MjggNi40MjIsMTEuMTIzIGwgNzMuNzMzLDQyLjU2OSBjIDEuOTg2LDEuMTQ3IDQuMjA0LDEuNzIxIDYuNDIxLDEuNzIxIDIuMjE4LDAgNC40MzUsLTAuNTc0IDYuNDIyLC0xLjcyMSBsIDczLjczMiwtNDIuNTY5IGMgMy45NzMsLTIuMjk1IDYuNDIyLC02LjUzNCA2LjQyMiwtMTEuMTIzIFYgNTUuNDEzIGMgMCwtNC41ODggLTIuNDQ5LC04LjgyOCAtNi40MjIsLTExLjEyMyBMIDYuNDIyLDEuNzIxIEMgNC40MzUsMC41NzMgMi4yMTgsMCAwLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZGRkMTA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxNTEuNjU1MzMsMjg2Ljc1NTg3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMyIKICAgICAgICAgZD0ibSAwLDAgYyAtMC44MDYsMCAtMS42MTIsMC4yMDkgLTIuMzM1LDAuNjI2IGwgLTY5LjA2MiwzOS44NzMgYyAtMS40NDUsMC44MzQgLTIuMzM1LDIuMzc2IC0yLjMzNSw0LjA0NCB2IDc5Ljc0NiBjIDAsMS42NjkgMC44OSwzLjIxIDIuMzM1LDQuMDQ0IGwgNjkuMDYyLDM5Ljg3MyBjIDAuNzIzLDAuNDE4IDEuNTI5LDAuNjI2IDIuMzM1LDAuNjI2IDAuODA3LDAgMS42MTMsLTAuMjA4IDIuMzM1LC0wLjYyNiBsIDY5LjA2MSwtMzkuODczIGMgMS40NDYsLTAuODM0IDIuMzM2LC0yLjM3NSAyLjMzNiwtNC4wNDQgViA0NC41NDMgYyAwLC0xLjY2OCAtMC44OSwtMy4yMSAtMi4zMzYsLTQuMDQ0IEwgMi4zMzUsMC42MjYgQyAxLjYxMywwLjIwOSAwLjgwNywwIDAsMCIKICAgICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDE1MS42NTUzMywyNjguNjY3MzMpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGg0KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGg1IgogICAgICAgICBkPSJtIDAsMCAtMjguMjI0LC01NC40MDkgNTYuNDQ4LDMyLjgyMyB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZmJjNzEyO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTk4LjE0NjkzLDE3NS43MTc0NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDYpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDciCiAgICAgICAgIGQ9Ik0gMCwwIFYgMCBMIDEuNTg1LDYuNDA3IFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNlMGUwZTA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxMjUuMzk2MjcsMTY0LjkzNzQ3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoOCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoOSIKICAgICAgICAgZD0ibSAwLDAgLTUuOTUsMTQuNjIgLTEzLjQ2NSwtMzkuNTA4IDE1LjQ2Niw4LjkyOCB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZmJjNzA3O2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTI0LjA2MDkzLDE0Ny40Njc0NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDEwKSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxMSIKICAgICAgICAgZD0iTSAwLDAgLTM3LjE4MSwtMjEuNDYyIC05LjI5NCwtMzcuNTYzIFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmOWE3MGQ7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywxMTYuOTY1MzMsMTc2LjE0NTczKSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMTIpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDEzIgogICAgICAgICBkPSJNIDAsMCAtMjkuNTQsLTExOS4zODQgMCwtMTM2LjQzOCBaIgogICAgICAgICBzdHlsZT0iZmlsbDojZWI4MTExO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMTQ4LjkwOTMzLDY5LjkwOTQ2NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDE0KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxNSIKICAgICAgICAgZD0iTSAwLDAgViAtMTM2LjQyMiBMIDI5LjQ4NywtNzkuNTggWiIKICAgICAgICAgc3R5bGU9ImZpbGw6I2ZlZTgxYjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDE1NC40MDE0Nyw2Ni4yMjI2NjcpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgxNikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMTciCiAgICAgICAgIGQ9Im0gMCwwIC0yLjUxNCw5LjU3OCBjIC0wLjU4NiwyLjEyOCAtMS4yOTcsNC44ODEgLTIuMTM1LDguMjYgLTAuODM4LDMuMzc4IC0xLjM5MSw1Ljc5OSAtMS42NTYsNy4yNjMgLTAuMjQsLTEuMzU3IC0wLjcxMywtMy41OTIgLTEuNDE3LC02LjcwNSBDIC04LjQyNywxNS4yODQgLTkuOTksOS4xNTIgLTEyLjQxMSwwIFogbSA2LjE0NSwtMjMuODYzIC0yLjg3MywxMC45MzQgaCAtMTguOTU1IGwgLTIuOTUzLC0xMC45MzQgSCAtMzUuOTU1IEwgLTE2LjkyLDM0LjcxOCBIIDQuMTEgbCAxOS4yNzQsLTU4LjU4MSB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZmZmZmZmO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsMzU4LjM4NDUzLDE1NC4xNTI5MykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDE4KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxOSIKICAgICAgICAgZD0ibSAwLDAgYyAxLjM1NywwIDIuNjQ3LC0wLjEwNyAzLjg3MSwtMC4zMTkgbCAwLjg3OCwtMC4xNiAtMS4zOTcsLTE0LjcyNSBjIC0xLjI3NywwLjMxOSAtMy4wNDYsMC40NzkgLTUuMzA4LDAuNDc5IC0zLjQwNSwwIC01Ljg3OSwtMC43NzggLTcuNDIyLC0yLjMzNSAtMS41NDMsLTEuNTU2IC0yLjMxNCwtMy43OTggLTIuMzE0LC02LjcyNCB2IC0yMi4yMjcgaCAtMTUuNjAzIHYgNDUuMjEzIGggMTEuNjEyIGwgMi40MzQsLTcuMjIzIGggMC43NTkgYyAxLjMwMiwyLjM5NCAzLjExOCw0LjMzIDUuNDQ3LDUuODA2IEMgLTQuNzE2LC0wLjczOCAtMi4zNjgsMCAwLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw0MjkuNTQ0NjcsMTI0LjYyMjQpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyMCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjEiCiAgICAgICAgIGQ9Im0gMCwwIHYgMjQuNTgyIGMgMCwzLjA1OSAtMC40MTgsNS4zNTQgLTEuMjU2LDYuODgzIC0wLjgzOCwxLjUzIC0yLjE2MiwyLjI5NSAtMy45NzEsMi4yOTUgLTIuMzk0LDAgLTQuMTUsLTEuMDI1IC01LjI2NywtMy4wNzMgLTEuMTE3LC0yLjA0OSAtMS42NzYsLTUuMjU0IC0xLjY3NiwtOS42MTcgViAwIGggLTE1LjY0MyB2IDI0LjU4MiBjIDAsMy4wNTkgLTAuMzk5LDUuMzU0IC0xLjE5OCw2Ljg4MyAtMC43OTgsMS41MyAtMi4wODgsMi4yOTUgLTMuODcsMi4yOTUgLTIuNDQ4LDAgLTQuMjMsLTEuMDkxIC01LjM0OCwtMy4yNzIgLTEuMTE3LC0yLjE4MiAtMS42NzYsLTUuNzQ3IC0xLjY3NiwtMTAuNjk1IFYgMCBoIC0xNS42MDMgdiA0NS4yMTMgaCAxMS43NzIgbCAxLjk1NiwtNS41ODcgaCAwLjkxOCBjIDEuMTk2LDIuMDc1IDIuOTMzLDMuNjU4IDUuMjA3LDQuNzQ5IDIuMjc1LDEuMDkgNC44NjIsMS42MzYgNy43NjIsMS42MzYgNi41MTgsMCAxMS4wOTQsLTEuOTgyIDEzLjcyNywtNS45NDYgaCAxLjIzOCBjIDEuMjc2LDEuODYyIDMuMDUzLDMuMzE4IDUuMzI2LDQuMzcgMi4yNzYsMS4wNSA0Ljc4MiwxLjU3NiA3LjUyNCwxLjU3NiA1LjM0NiwwIDkuMjk3LC0xLjM3IDExLjg1MSwtNC4xMSAyLjU1MywtMi43NDEgMy44MzEsLTYuOTA0IDMuODMxLC0xMi40OTEgViAwIFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw1MTMuNDk4NCwxODUuOTcwNjcpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyMikiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjMiCiAgICAgICAgIGQ9Ik0gMCwwIEMgMS44ODksMCAzLjUwNSwwLjU5OSA0Ljg0OSwxLjc5NiA2LjE5MSwyLjk5MyA2Ljg2NCw0LjU0OSA2Ljg2NCw2LjQ2NSBWIDkuOTc3IEwgMy4yNzIsOS44MTcgQyAtMS44NjIsOS42MyAtNC40Myw3Ljc0MiAtNC40Myw0LjE1IC00LjQzLDEuMzgzIC0yLjk1MywwIDAsMCBNIDExLjU3MiwtMTAuMjE2IDguNTgsLTQuMjMgSCA4LjI2MSBDIDYuMTU4LC02LjgzNyA0LjAxNywtOC42MiAxLjgzNiwtOS41NzcgYyAtMi4xODIsLTAuOTU4IC01LjAwMiwtMS40MzcgLTguNDYsLTEuNDM3IC00LjI1NywwIC03LjYwOSwxLjI3NyAtMTAuMDU3LDMuODMxIC0yLjQ0NywyLjU1NCAtMy42NzEsNi4xNDUgLTMuNjcxLDEwLjc3NCAwLDQuODE1IDEuNjc2LDguNDAxIDUuMDI5LDEwLjc1NSAzLjM1MSwyLjM1NCA4LjIwNiwzLjY3NyAxNC41NjUsMy45NyBsIDcuNTQyLDAuMjQgdiAwLjYzOCBjIDAsMy43MjUgLTEuODM2LDUuNTg3IC01LjUwNyw1LjU4NyAtMy4yOTgsMCAtNy40ODksLTEuMTE3IC0xMi41NywtMy4zNTIgbCAtNC41MSwxMC4yOTYgYyA1LjI2OCwyLjcxMyAxMS45MTgsNC4wNyAxOS45NTMsNC4wNyA1Ljc5OSwwIDEwLjI4OSwtMS40MzcgMTMuNDY4LC00LjMxIDMuMTc5LC0yLjg3MyA0Ljc2OSwtNi44OSA0Ljc2OSwtMTIuMDUxIHYgLTI5LjY1IHoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw1NjcuMDA2MjcsMTcyLjM0OTYpIgogICAgICAgICBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyNCkiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoMjUiCiAgICAgICAgIGQ9Im0gMCwwIGMgMCwtNC42MjkgMS42MDksLTYuOTQ0IDQuODI5LC02Ljk0NCAxLjQ4OSwwIDIuNjQsMC41NzIgMy40NTEsMS43MTYgMC44MTIsMS4xNDQgMS4yMTgsMi44NiAxLjIxOCw1LjE0OCAwLDQuNjgyIC0xLjU1Nyw3LjAyMyAtNC42NjksNy4wMjMgQyAxLjYwOSw2Ljk0MyAwLDQuNjI5IDAsMCBtIC00LjkwOCwtMzYuMDM1IGMgMCwtMS4yNzcgMC42OTEsLTIuMzA4IDIuMDc1LC0zLjA5MyAxLjM4MywtMC43ODQgMy4yMzIsLTEuMTc3IDUuNTQ3LC0xLjE3NyAzLjc3NywwIDYuODA0LDAuNDczIDkuMDc4LDEuNDE3IDIuMjc1LDAuOTQ1IDMuNDEyLDIuMTYxIDMuNDEyLDMuNjUxIDAsMS4xOTcgLTAuNjkyLDIuMDQyIC0yLjA3NSwyLjUzNCAtMS4zODMsMC40OTMgLTMuMzY1LDAuNzM5IC01Ljk0NSwwLjczOSBIIDEuMDc4IGMgLTEuNjc3LDAgLTMuMDkzLC0wLjM5MyAtNC4yNSwtMS4xNzggLTEuMTU3LC0wLjc4NCAtMS43MzYsLTEuNzQ5IC0xLjczNiwtMi44OTMgbSAzNC4wNzksNTAuODQgViA3LjI2MyBMIDIyLjk4Niw0Ljk4OCBjIDAuODUxLC0xLjU0MyAxLjI3NywtMy4zMzkgMS4yNzcsLTUuMzg3IDAsLTQuODY5IC0xLjcxLC04LjY0NyAtNS4xMjgsLTExLjMzMyAtMy40MTksLTIuNjg4IC04LjUyLC00LjAzMSAtMTUuMzA0LC00LjAzMSAtMS42NzYsMCAtMy4wMDcsMC4xMDYgLTMuOTksMC4zMTkgLTAuMzczLC0wLjY5MiAtMC41NTksLTEuMzQzIC0wLjU1OSwtMS45NTUgMCwtMC43NzIgMC42MjUsLTEuMzY0IDEuODc1LC0xLjc3NiAxLjI1MSwtMC40MTIgMi44ODcsLTAuNjE4IDQuOTA5LC0wLjYxOCBoIDcuNTAyIGMgMTAuMTM2LDAgMTUuMjA0LC00LjI3IDE1LjIwNCwtMTIuODEgMCwtNS41MDcgLTIuMzQ4LC05Ljc5IC03LjA0MywtMTIuODQ5IC00LjY5NiwtMy4wNiAtMTEuMjg4LC00LjU5IC0xOS43NzMsLTQuNTkgLTYuNDEyLDAgLTExLjM1MywxLjA3MSAtMTQuODI1LDMuMjEzIC0zLjQ3MiwyLjE0MSAtNS4yMDgsNS4yMjEgLTUuMjA4LDkuMjM4IDAsNS40MDEgMy4zNTIsOC44ODUgMTAuMDU2LDEwLjQ1NSAtMS4zODMsMC41ODUgLTIuNTg3LDEuNTMgLTMuNjExLDIuODMzIC0xLjAyNCwxLjMwMyAtMS41MzcsMi41OTQgLTEuNTM3LDMuODcxIDAsMS40MSAwLjM4NiwyLjY1NCAxLjE1NywzLjczMSAwLjc3MiwxLjA3OCAyLjM4MSwyLjM2MSA0LjgyOSwzLjg1MSAtMi4zNDEsMS4wMzggLTQuMTgzLDIuNjYgLTUuNTI3LDQuODY5IC0xLjM0NCwyLjIwOCAtMi4wMTUsNC44OTUgLTIuMDE1LDguMDYxIDAsNC45MjEgMS42NzYsOC43MzkgNS4wMjksMTEuNDUyIDMuMzUxLDIuNzE0IDguMTQsNC4wNzEgMTQuMzY1LDQuMDcxIDAuODI0LDAgMi4yNDgsLTAuMDk0IDQuMjcsLTAuMjggMi4wMjIsLTAuMTg2IDMuNTEyLC0wLjM1OSA0LjQ2OSwtMC41MTggeiIKICAgICAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDYyMS4xNDY5MywxNDUuNDI2NCkiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDI2KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgyNyIKICAgICAgICAgZD0iTSAwLDAgQyAtMS44MzYsMCAtMy4zNzIsLTAuNTc5IC00LjYwOSwtMS43MzYgLTUuODQ3LC0yLjg5MyAtNi41NzEsLTQuNzA4IC02Ljc4NCwtNy4xODMgSCA2LjYyNCBDIDYuNTcsLTUuMDAyIDUuOTUyLC0zLjI1OSA0Ljc2OSwtMS45NTUgMy41ODUsLTAuNjUyIDEuOTk1LDAgMCwwIG0gMC45MTgsLTM2LjE5NCBjIC03LjUyOSwwIC0xMy4zNzUsMi4wMDIgLTE3LjUzOSw2LjAwNiAtNC4xNjMsNC4wMDMgLTYuMjQ1LDkuNzAzIC02LjI0NSwxNy4wOTkgMCw3LjYzNSAxLjkyOSwxMy40OTQgNS43ODYsMTcuNTc5IDMuODU3LDQuMDgzIDkuMzY0LDYuMTI1IDE2LjUyMSw2LjEyNSA2LjgxLDAgMTIuMDcyLC0xLjc3NiAxNS43ODMsLTUuMzI3IDMuNzExLC0zLjU1MiA1LjU2NywtOC42NjcgNS41NjcsLTE1LjM0NCB2IC02Ljk0MyBIIC03LjEwNCBjIDAuMTA3LC0yLjUyOCAxLjAzMiwtNC41MSAyLjc3NCwtNS45NDYgMS43NDIsLTEuNDM3IDQuMTE3LC0yLjE1NiA3LjEyMywtMi4xNTYgMi43NCwwIDUuMjYxLDAuMjYgNy41NjIsMC43NzkgMi4zMDEsMC41MTkgNC43OTUsMS40MDMgNy40ODMsMi42NTQgdiAtMTEuMjE0IGMgLTIuNDQ4LC0xLjI1MSAtNC45NzYsLTIuMTE1IC03LjU4MiwtMi41OTQgLTIuNjA4LC0wLjQ3OSAtNS43MjEsLTAuNzE4IC05LjMzOCwtMC43MTgiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw2OTEuMTg5ODcsMTM4Ljc3NikiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDI4KSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgyOSIKICAgICAgICAgZD0ibSAwLDAgYyAyLjUsMCA0LjI2MywwLjc4NCA1LjI4NywyLjM1NCAxLjAyNCwxLjU3IDEuNTc2LDMuOTkxIDEuNjU2LDcuMjYzIHYgMS4yMzcgYyAwLDMuOTkxIC0wLjU3Miw2LjgzMSAtMS43MTUsOC41MiAtMS4xNDUsMS42ODkgLTIuOTQxLDIuNTM0IC01LjM4OCwyLjUzNCAtMi4wNDksMCAtMy42MzksLTAuOTY1IC00Ljc2OSwtMi44OTMgLTEuMTMxLC0xLjkyOSAtMS42OTYsLTQuNjc2IC0xLjY5NiwtOC4yNDEgMCwtMy41MTEgMC41NzIsLTYuMTg1IDEuNzE2LC04LjAyMSBDIC0zLjc2NiwwLjkxOCAtMi4xMjksMCAwLDAgbSAtNi4zODYsLTEyLjMzMSBjIC0zLjIxOCwwIC02LjAzMiwwLjkxOCAtOC40MzksMi43NTQgLTIuNDA4LDEuODM1IC00LjI3MSw0LjUzNSAtNS41ODcsOC4xIC0xLjMxNywzLjU2NSAtMS45NzYsNy43MjggLTEuOTc2LDEyLjQ5MSAwLDcuMzQyIDEuNDc3LDEzLjA4OSA0LjQzLDE3LjIzOSAyLjk1Myw0LjE1IDcuMDEsNi4yMjYgMTIuMTcxLDYuMjI2IDIuNTI3LDAgNC43NDIsLTAuNTA2IDYuNjQ0LC0xLjUxNyAxLjkwMiwtMS4wMTEgMy42MzgsLTIuNzEzIDUuMjA4LC01LjEwOCBoIDAuMzIgQyA1Ljg3OSwzMS4zOTIgNS42MjYsMzQuOTMgNS42MjYsMzguNDY5IFYgNTAuNTYgSCAyMS4zNDkgViAtMTEuNTMzIEggOS41NzcgTCA2LjIyNSwtNS44MjYgSCA1LjYyNiBjIC0yLjY4OCwtNC4zMzcgLTYuNjksLTYuNTA1IC0xMi4wMTIsLTYuNTA1IgogICAgICAgICBzdHlsZT0iZmlsbDojZmZmZmZmO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMzMzMsMCwwLC0xLjMzMzMzMzMsNzUxLjM3MzQ3LDE3MC41OTM3MykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDMwKSIgLz4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgzMSIKICAgICAgICAgZD0ibSAwLDAgYyAwLC0zLjg4NCAwLjUxOSwtNi44NDQgMS41NTcsLTguODc5IDEuMDM3LC0yLjAzNSAyLjc3OSwtMy4wNTMgNS4yMjcsLTMuMDUzIDIuNDIsMCA0LjEzLDEuMDE4IDUuMTI4LDMuMDUzIDAuOTk3LDIuMDM1IDEuNDk2LDQuOTk1IDEuNDk2LDguODc5IDAsMy44NTcgLTAuNTA2LDYuNzcxIC0xLjUxNiw4LjczOSAtMS4wMTEsMS45NjkgLTIuNzQxLDIuOTUzIC01LjE4OCwyLjk1MyAtMi4zOTQsMCAtNC4xMSwtMC45NzcgLTUuMTQ3LC0yLjkzMyBDIDAuNTE5LDYuODA0IDAsMy44ODQgMCwwIG0gMjkuMjkxLDAgYyAwLC03LjM5NiAtMS45ODksLTEzLjE2MyAtNS45NjYsLTE3LjI5OSAtMy45NzcsLTQuMTM3IC05LjU0NSwtNi4yMDUgLTE2LjcwMSwtNi4yMDUgLTYuODYzLDAgLTEyLjMyNCwyLjExNSAtMTYuMzgxLDYuMzQ1IC00LjA1Nyw0LjIzIC02LjA4Niw5Ljk1IC02LjA4NiwxNy4xNTkgMCw3LjM2OSAxLjk4OSwxMy4wOTUgNS45NjYsMTcuMTggMy45NzgsNC4wODMgOS41NTgsNi4xMjUgMTYuNzQsNi4xMjUgNC40NDQsMCA4LjM2NywtMC45NDUgMTEuNzczLC0yLjgzMyAzLjQwNSwtMS44ODkgNi4wMzIsLTQuNTk3IDcuODgyLC04LjEyMSBDIDI4LjM2Niw4LjgyNiAyOS4yOTEsNC43MDkgMjkuMjkxLDAiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMyw4MDUuNDIwMjcsMTU1LjY5NTg3KSIKICAgICAgICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMzIpIiAvPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDMzIgogICAgICAgICBkPSJtIDAsMCB2IDI0LjY2MiBjIDAsMy4wMDUgLTAuNDMzLDUuMjc0IC0xLjI5Nyw2LjgwMyAtMC44NjUsMS41MyAtMi4yNTUsMi4yOTUgLTQuMTcxLDIuMjk1IC0yLjYzMywwIC00LjUzNiwtMS4wNTEgLTUuNzA2LC0zLjE1MyAtMS4xNzEsLTIuMTAyIC0xLjc1NiwtNS43MDYgLTEuNzU2LC0xMC44MTQgViAwIGggLTE1LjYwMiB2IDQ1LjIxMyBoIDExLjc3MSBsIDEuOTU1LC01LjU4NyBoIDAuOTE4IGMgMS4zMywyLjEyOCAzLjE3MywzLjcyNSA1LjUyOCw0Ljc4OSAyLjM1NCwxLjA2NCA1LjA2MSwxLjU5NiA4LjEyMSwxLjU5NiA1LjAwMSwwIDguODkxLC0xLjQ1IDExLjY3MiwtNC4zNSAyLjc3OSwtMi45IDQuMTcsLTYuOTgzIDQuMTcsLTEyLjI1MSBWIDAgWiIKICAgICAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMS4zMzMzMzMzLDAsMCwtMS4zMzMzMzMzLDg4Ny4xOTI0LDE4NS45NzA2NykiCiAgICAgICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDM0KSIgLz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPgo=" alt="Armagedon">
+                </a>
+                <p class="footer-desc">Armagedon är Borås spelförening för brädspel, figurspel, kortspel och rollspel. Vi håller till på Katrinehillsgatan 7b, 504 52 Borås.</p>
+            </div>
+            <div class="footer-bottom">
+                <nav class="footer-links" aria-label="Länkar">
+                    <a href="#">Om oss</a><a href="#">Aktiviteter</a><a href="#">Bli medlem</a><a href="#">Kontakt</a>
+                </nav>
+                <span class="footer-copy">© 2026 Armagedon</span>
+            </div>
+        </div>
+    </footer>
+
+</div>
+</div>
+
+<script>
+(function () {
+    var site = document.getElementById('site');
+    var stage = document.getElementById('stage');
+    var apply = {
+        device: function (v) { stage.classList.toggle('is-mobile', v === 'mobile'); },
+        theme:  function (v) { site.dataset.theme = v; },
+        user:   function (v) { site.dataset.user = v; },
+        labels: function (v) { site.dataset.labels = v; },
+        header: function (v) { site.dataset.header = v; },
+        icons:  function (v) { site.dataset.icons = v; },
+        events: function (v) { site.dataset.events = v; }
+    };
+    document.querySelectorAll('.seg').forEach(function (seg) {
+        var group = seg.dataset.group;
+        seg.addEventListener('click', function (e) {
+            var btn = e.target.closest('button');
+            if (!btn) return;
+            seg.querySelectorAll('button').forEach(function (b) {
+                b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+            });
+            apply[group](btn.dataset.value);
+        });
+    });
+})();
+</script>
+</body>
+</html>
